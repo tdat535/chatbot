@@ -1,1 +1,11 @@
 docker-compose up -d
+
+<script src="http://localhost:3001/webhook/website-widget.js?host=http://localhost:3001"  ></script>
+                                                                                          
+Khi deploy lên server thật thì đổi localhost:3001 thành domain/IP thật, ví dụ:
+
+<script src="https://crm.vienDong.edu.vn/webhook/website-widget.js?host=https://crm.vien
+  Dong.edu.vn"></script>
+
+Dán vào trước thẻ </body> là xong — widget chat tự hiện góc dưới phải, không cần làm gì 
+  thêm.
