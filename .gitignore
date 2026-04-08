@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# Environment files (chứa token, mật khẩu — KHÔNG push lên)
+.env
+backend/.env
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+chatbot-python/.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+chatbot-python/venv/
+chatbot-python/__pycache__/
+
+# FAISS index & training data (file nặng, data riêng)
+chatbot-python/*.faiss
+chatbot-python/chunks.txt
+chatbot-python/data-txt/
+
+# Build output
+frontend/dist/
+frontend/build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db

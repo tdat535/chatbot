@@ -1,0 +1,12 @@
+{
+  "name": "crm-mini",
+  "version": "1.0.0",
+  "description": "CRM Mini - Hộp thư đa kênh với auto-reply chatbot",
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "start:backend": "cd backend && npm start",
+    "start:chatbot": "cd chatbot-python && ..\\chatbot-python\\venv\\Scripts\\python -m uvicorn demo_main:app --host 0.0.0.0 --port 8000"
+  }
+}

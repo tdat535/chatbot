@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find 'D:\\\\Workspace\\\\crm mini/chatbot-python' -maxdepth 1 -type f -name *.py -o -name *.json -o -name *.yml -o -name *.yaml -o -name *.txt -o -name *.html)",
+      "Bash(npm install:*)",
+      "Bash(node -e \"require\\(''./src/db''\\); console.log\\(''DB OK''\\)\")",
+      "Bash(node -e \":*)",
+      "Bash(npm uninstall:*)",
+      "Bash(dir:*)",
+      "Bash(find '/d/Workspace/crm mini' -not -path */node_modules/* -not -path */__pycache__/* -not -path */venv/* -type d)"
+    ]
+  }
+}

@@ -1,0 +1,61 @@
+services:
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-crm123}
+      MYSQL_DATABASE: crm_mini
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  chatbot:
+    build: ./chatbot-python
+    restart: always
+    environment:
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      STORAGE_DIR: /app/storage
+    volumes:
+      - chatbot_storage:/app/storage
+      - chatbot_data:/app/data-txt
+
+  backend:
+    build: ./backend
+    restart: always
+    environment:
+      PORT: 3001
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:-crm123}
+      DB_NAME: crm_mini
+      CHATBOT_URL: http://chatbot:8000
+      FB_PAGE_ACCESS_TOKEN: ${FB_PAGE_ACCESS_TOKEN:-}
+      FB_VERIFY_TOKEN: ${FB_VERIFY_TOKEN:-crm_mini_verify_123}
+      FB_APP_SECRET: ${FB_APP_SECRET:-}
+      ZALO_OA_ACCESS_TOKEN: ${ZALO_OA_ACCESS_TOKEN:-}
+      AUTO_REPLY_ENABLED: ${AUTO_REPLY_ENABLED:-true}
+    depends_on:
+      db:
+        condition: service_healthy
+      chatbot:
+        condition: service_started
+
+  frontend:
+    build: ./frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - chatbot
+
+volumes:
+  db_data:
+  chatbot_storage:
+  chatbot_data:
