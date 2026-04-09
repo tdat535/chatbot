@@ -28,7 +28,7 @@ router.post('/facebook', async (req, res) => {
     if (!sig) return res.sendStatus(401);
     const expected = 'sha256=' + crypto
       .createHmac('sha256', appSecret)
-      .update(JSON.stringify(req.body))
+      .update(req.rawBody)
       .digest('hex');
     if (sig !== expected) return res.sendStatus(401);
   }
