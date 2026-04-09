@@ -125,7 +125,7 @@ async function handleIncomingMessage({ channel, channelUserId, senderName, messa
   // 5. Auto-reply via AI chatbot
   if (autoReplyGlobal && autoReplyConv) {
     // Lấy 3 tin nhắn gần nhất để làm context cho câu hỏi ngắn/mơ hồ
-    const recentMsgs = await db.all(
+    const recentMsgs = await db.query(
       "SELECT content, direction FROM messages WHERE conversation_id = ? AND type = 'text' ORDER BY id DESC LIMIT 4",
       [conversation.id]
     );
