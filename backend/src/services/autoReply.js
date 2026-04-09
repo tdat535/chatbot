@@ -124,7 +124,19 @@ async function handleIncomingMessage({ channel, channelUserId, senderName, messa
 
   // 5. Auto-reply via AI chatbot
   if (autoReplyGlobal && autoReplyConv) {
-    let answer = await askChatbot(message);
+    // Lấy 3 tin nhắn gần nhất để làm context cho câu hỏi ngắn/mơ hồ
+    const recentMsgs = await db.all(
+      "SELECT content, direction FROM messages WHERE conversation_id = ? AND type = 'text' ORDER BY id DESC LIMIT 4",
+      [conversation.id]
+    );
+    const contextLines = recentMsgs.reverse().slice(0, -1) // bỏ tin vừa lưu
+      .map(m => m.direction === 'in' ? `Học sinh: ${m.content}` : `Bot: ${m.content}`)
+      .join('\n');
+    const contextualQuestion = contextLines
+      ? `${contextLines}\nHọc sinh: ${message}`
+      : message;
+
+    let answer = await askChatbot(contextualQuestion);
     if (answer) {
       // Nếu chatbot trả về JSON (flow format cũ), lấy trường .text
       try {
