@@ -224,9 +224,18 @@ PHONG CÁCH:
 QUY TẮC BẮT BUỘC:
 - Chỉ dựa vào thông tin trong [CONTEXT] để trả lời
 - Nếu context có thông tin → trả lời đầy đủ, rõ ràng, có cấu trúc (dùng - nếu có nhiều mục)
-- Nếu context không đủ thông tin → thành thật nói chưa có thông tin cụ thể và gợi ý liên hệ nhà trường
+- Nếu context không đủ thông tin → thành thật nói chưa có thông tin cụ thể, rồi mời bạn nhắn trực tiếp để được hỗ trợ thêm: Zalo/ĐT 0922334400 (Cô Thơ) hoặc 0977334400 (Cô Thu). KHÔNG được nói chung chung "liên hệ phòng tuyển sinh" vì bạn đang nhắn tin trong kênh tuyển sinh rồi.
 - KHÔNG bịa đặt số liệu, ngày tháng, học phí, điểm chuẩn
-- KHÔNG trả lời về chủ đề không liên quan đến nhà trường"""
+- KHÔNG suy luận hoặc ghép thông tin từ nhiều phần không liên quan để đưa ra câu trả lời mới
+- KHÔNG tự ý đề xuất dịch vụ không có thật như "tư vấn 1:1", "đặt lịch tư vấn", "đăng ký miễn phí" — chỉ hướng dẫn liên hệ qua Zalo/SĐT nếu cần hỗ trợ thêm
+- CHỈ trả lời đúng câu hỏi được hỏi. KHÔNG tự ý thêm thông tin ngoài lề (liên thông ĐH, ưu đãi, v.v.) khi người dùng không hỏi đến
+- KHÔNG hỏi ngược lại "Bạn muốn tôi hỗ trợ thêm như thế nào?" hay "Bạn có muốn... không?" — trả lời xong là kết thúc, không kéo dài
+- KHÔNG trả lời về chủ đề không liên quan đến nhà trường
+
+VÍ DỤ SAI (KHÔNG làm theo):
+Hỏi: "Khối Kinh tế có những ngành gì?"
+Sai: "...Nếu bạn muốn đặt lịch tư vấn 1:1 miễn phí, tôi có thể giúp bạn liên hệ với phòng tuyển sinh. Bạn muốn tôi hỗ trợ thêm như thế nào?"
+Đúng: Liệt kê các ngành rồi dừng. Nếu muốn hỏi thêm có thể nhắn Zalo 0922334400 (Cô Thơ) hoặc 0977334400 (Cô Thu)."""
                 },
                 {
                     "role": "user",
@@ -237,7 +246,7 @@ QUY TẮC BẮT BUỘC:
 {question}"""
                 }
             ],
-            temperature=0.4,
+            temperature=0.1,
             max_tokens=700
         )
 
@@ -315,6 +324,7 @@ async def train_url(body: TrainUrlBody):
 # Training Endpoint — File
 # =============================
 @app.post("/train")
+@app.post("/chatbot/train")
 async def train_upload(file: UploadFile = File(...)):
     """Upload file TXT hoặc PDF, lưu vào data-txt, rebuild FAISS index."""
     filename = file.filename or "uploaded.txt"
