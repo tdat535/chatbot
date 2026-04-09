@@ -3,6 +3,7 @@ const router = express.Router();
 const crypto = require('crypto');
 const { handleIncomingMessage } = require('../services/autoReply');
 const { getUserProfile } = require('../services/facebook');
+const db = require('../db');
 
 // ===================== FACEBOOK =====================
 
@@ -41,12 +42,32 @@ router.post('/facebook', async (req, res) => {
   const io = req.app.get('io');
   for (const entry of body.entry || []) {
     for (const event of entry.messaging || []) {
-      if (!event.message || event.message.is_echo) continue;
-
-      const senderId = event.sender.id;
+      if (!event.message) continue;
       const text = event.message.text;
       if (!text) continue;
 
+      // Echo: page tự reply trực tiếp trên Facebook
+      if (event.message.is_echo) {
+        const recipientId = event.recipient.id;
+        const conv = await db.get(
+          "SELECT c.id FROM conversations c JOIN customers cu ON c.customer_id = cu.id WHERE cu.channel = 'facebook' AND cu.channel_user_id = ?",
+          [recipientId]
+        );
+        if (!conv) continue;
+        const result = await db.run(
+          "INSERT INTO messages (conversation_id, content, direction, sent_by, sender_name) VALUES (?, ?, 'out', 'agent', 'Facebook Page')",
+          [conv.id, text]
+        );
+        const msg = await db.get('SELECT * FROM messages WHERE id = ?', [result.insertId]);
+        await db.run(
+          'UPDATE conversations SET last_message = ?, last_message_at = NOW(), updated_at = NOW() WHERE id = ?',
+          [text, conv.id]
+        );
+        if (io) io.emit('new_message', { conversation: await db.get('SELECT * FROM conversations WHERE id = ?', [conv.id]), message: msg });
+        continue;
+      }
+
+      const senderId = event.sender.id;
       // Try to get user's name from FB
       let senderName = `FB_${senderId.slice(-6)}`;
       let avatarUrl = null;
