@@ -8,4 +8,8 @@ Khi deploy lên server thật thì đổi localhost:3001 thành domain/IP thật
   Dong.edu.vn"></script>
 
 Dán vào trước thẻ </body> là xong — widget chat tự hiện góc dưới phải, không cần làm gì 
+<<<<<<< HEAD
   thêm.
+=======
+  thêm.
+>>>>>>> af41f2d9b7b22e06840f2d84a888d7dcd67dace7
