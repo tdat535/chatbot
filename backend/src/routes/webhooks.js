@@ -47,6 +47,9 @@ router.post('/facebook', async (req, res) => {
       if (!text) continue;
 
       // Echo: page tự reply trực tiếp trên Facebook
+      // Bỏ qua echo do chính app gửi (bot reply) để tránh duplicate
+      if (event.message.is_echo && event.message.app_id) continue;
+
       if (event.message.is_echo) {
         const recipientId = event.recipient.id;
         const conv = await db.get(
