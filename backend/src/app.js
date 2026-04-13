@@ -50,6 +50,7 @@ const authLimiter = rateLimit({
 });
 
 app.set('io', io);
+app.set('trust proxy', 1); // đứng sau nginx proxy
 app.use(cors());
 app.use('/webhook/facebook', bodyParser.json({ verify: (req, res, buf) => { req.rawBody = buf; } }));
 app.use(bodyParser.json());
