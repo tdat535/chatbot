@@ -4,6 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const http = require('http');
 const { Server } = require('socket.io');
+const rateLimit = require('express-rate-limit');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
 
@@ -24,6 +25,30 @@ const io = new Server(server, {
   cors: { origin: '*', methods: ['GET', 'POST'] },
 });
 
+// Rate limiters
+const apiLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 phút
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Quá nhiều yêu cầu, thử lại sau.' },
+});
+
+const webhookLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 120, // Facebook/Zalo có thể gửi batch nhiều event
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 phút
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Quá nhiều lần đăng nhập, thử lại sau 15 phút.' },
+});
+
 app.set('io', io);
 app.use(cors());
 app.use('/webhook/facebook', bodyParser.json({ verify: (req, res, buf) => { req.rawBody = buf; } }));
@@ -35,14 +60,14 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
   customCss: '.swagger-ui .topbar { background: #0f172a; } .swagger-ui .topbar-wrapper img { display: none; } .swagger-ui .topbar-wrapper::before { content: "CRM Mini API"; color: white; font-size: 18px; font-weight: 700; }',
 }));
 
-app.use('/webhook', webhookRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/conversations', conversationRoutes);
-app.use('/api/customers', customerRoutes);
-app.use('/api/templates', templateRoutes);
-app.use('/api/stats', statsRoutes);
-app.use('/api/broadcast', broadcastRoutes);
+app.use('/webhook', webhookLimiter, webhookRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/users', apiLimiter, userRoutes);
+app.use('/api/conversations', apiLimiter, conversationRoutes);
+app.use('/api/customers', apiLimiter, customerRoutes);
+app.use('/api/templates', apiLimiter, templateRoutes);
+app.use('/api/stats', apiLimiter, statsRoutes);
+app.use('/api/broadcast', apiLimiter, broadcastRoutes);
 app.get('/api/health', (req, res) => res.json({ status: 'ok', db: 'mysql' }));
 
 // Socket.io - Website chat

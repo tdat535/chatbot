@@ -2,12 +2,16 @@ import os
 import re
 import faiss
 import numpy as np
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
 from groq import Groq
 from dotenv import load_dotenv
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 # =============================
 # Load ENV
@@ -28,7 +32,11 @@ CHUNKS_PATH = os.path.join(STORAGE_DIR, "chunks.txt")
 # =============================
 # FastAPI Init
 # =============================
+limiter = Limiter(key_func=get_remote_address)
+
 app = FastAPI(title="Viendong Chatbot API")
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
@@ -172,7 +180,8 @@ def get_chunks():
 # Main Ask Endpoint
 # =============================
 @app.get("/ask")
-def ask(question: str):
+@limiter.limit("20/minute")
+def ask(request: Request, question: str):
 
     if not question.strip():
         return {"answer": "Bạn hỏi mình gì đó đi chứ 😄"}
@@ -269,7 +278,8 @@ class TrainUrlBody(BaseModel):
 
 @app.post("/train-url")
 @app.post("/chatbot/train-url")
-async def train_url(body: TrainUrlBody):
+@limiter.limit("5/minute")
+async def train_url(request: Request, body: TrainUrlBody):
     """Scrape một trang web và train từ nội dung đó."""
     import requests
     from bs4 import BeautifulSoup
@@ -325,7 +335,8 @@ async def train_url(body: TrainUrlBody):
 # =============================
 @app.post("/train")
 @app.post("/chatbot/train")
-async def train_upload(file: UploadFile = File(...)):
+@limiter.limit("5/minute")
+async def train_upload(request: Request, file: UploadFile = File(...)):
     """Upload file TXT hoặc PDF, lưu vào data-txt, rebuild FAISS index."""
     filename = file.filename or "uploaded.txt"
     ext = os.path.splitext(filename)[1].lower()
