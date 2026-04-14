@@ -21,7 +21,6 @@ chatbot-python/__pycache__/
 # FAISS index & training data (file nặng, data riêng)
 chatbot-python/*.faiss
 chatbot-python/chunks.txt
-chatbot-python/data-txt/
 
 # Build output
 frontend/dist/
