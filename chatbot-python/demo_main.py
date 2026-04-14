@@ -333,6 +333,8 @@ async def train_url(request: Request, body: TrainUrlBody):
 # =============================
 # Training Endpoint — File
 # =============================
+MAX_UPLOAD_BYTES = 10 * 1024 * 1024  # 10MB
+
 @app.post("/train")
 @app.post("/chatbot/train")
 @limiter.limit("5/minute")
@@ -346,6 +348,9 @@ async def train_upload(request: Request, file: UploadFile = File(...)):
 
     os.makedirs(DATA_FOLDER, exist_ok=True)
     content_bytes = await file.read()
+
+    if len(content_bytes) > MAX_UPLOAD_BYTES:
+        raise HTTPException(status_code=413, detail=f"File quá lớn (tối đa {MAX_UPLOAD_BYTES // 1024 // 1024}MB)")
 
     if ext == ".pdf":
         try:
