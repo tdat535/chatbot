@@ -179,9 +179,25 @@ def get_chunks():
 # =============================
 # Main Ask Endpoint
 # =============================
+def extract_last_question(text: str) -> str:
+    """Lấy câu hỏi cuối cùng của học sinh từ conversation context."""
+    lines = text.strip().split('\n')
+    # Tìm dòng cuối cùng của học sinh
+    for line in reversed(lines):
+        line = line.strip()
+        if line.startswith('Học sinh:'):
+            return line[len('Học sinh:'):].strip()
+    # Fallback: lấy dòng cuối cùng không rỗng
+    for line in reversed(lines):
+        if line.strip():
+            return line.strip()
+    return text.strip()
+
+
 @app.get("/ask")
 @limiter.limit("20/minute")
-def ask(request: Request, question: str):
+async def ask(request: Request, question: str):
+    import asyncio
 
     if not question.strip():
         return {"answer": "Bạn hỏi mình gì đó đi chứ 😄"}
@@ -189,8 +205,12 @@ def ask(request: Request, question: str):
     if index is None or not documents:
         return {"answer": "Bot chưa được huấn luyện dữ liệu. Vui lòng upload tài liệu trong phần Huấn luyện Bot nhé!"}
 
+    # Tách câu hỏi thực sự để search (không search cả đoạn hội thoại)
+    search_query = extract_last_question(question)
+
     try:
-        search_results = search_documents(question)
+        loop = asyncio.get_event_loop()
+        search_results = await loop.run_in_executor(None, search_documents, search_query)
 
         if not search_results:
             return {
@@ -256,7 +276,7 @@ Sai: "...Nếu bạn muốn đặt lịch tư vấn 1:1 miễn phí, tôi có th
                 }
             ],
             temperature=0.1,
-            max_tokens=700
+            max_tokens=400
         )
 
         answer = response.choices[0].message.content.strip()
