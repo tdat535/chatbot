@@ -1,0 +1,120 @@
+[CẨM NANG TOÀN TẬP: KỲ THI TỐT NGHIỆP THPT 2026]
+
+Đơn vị:
+- Trường Cao đẳng Viễn Đông
+- TP. Hồ Chí Minh
+
+
+[5 THAY ĐỔI MANG TÍNH BƯỚC NGOẶT]
+
+Thời gian thi:
+- Dự kiến 11 - 12/06/2026
+
+Mô hình thi:
+- 2 môn bắt buộc
+- 2 môn tự chọn
+- Gọi là mô hình 2+2
+
+Điểm học bạ:
+- Chiếm 50% tổng điểm xét tốt nghiệp
+- Tính trung bình cả 3 năm lớp 10, 11, 12
+
+Hình thức thi:
+- Thí điểm thi trên máy tính
+- Khoảng 100.000 thí sinh
+
+Đề thi:
+- Không công bố đề thi mẫu
+
+
+[MÔ HÌNH MÔN THI 2+2]
+
+Môn bắt buộc:
+- Toán
+- Ngữ văn
+
+Môn tự chọn (chọn 2):
+- Ngoại ngữ
+- Lịch sử
+- Vật lý
+- Hóa học
+- Sinh học
+- Địa lý
+- Giáo dục kinh tế và Pháp luật
+- Tin học
+- Công nghệ
+
+
+[THÔNG SỐ KỸ THUẬT VÀ CẤU TRÚC BÀI THI]
+
+Ngữ văn:
+- Hình thức: Tự luận
+- Thời gian: 120 phút
+- Phần I: Đọc hiểu (40% - 4.0 điểm)
+- Phần II: Làm văn (60% - 6.0 điểm)
+
+Toán:
+- Hình thức: Trắc nghiệm
+- Thời gian: 90 phút
+
+Các môn còn lại:
+- Thời gian: 50 phút
+
+
+[3 ĐỊNH DẠNG TRẮC NGHIỆM MỚI]
+
+Phần I:
+- Nhiều lựa chọn
+- Mỗi câu đúng = 0.25 điểm
+
+Phần II:
+- Dạng Đúng/Sai
+- Tính điểm lũy tiến:
+  + Đúng 1 ý = 0.1 điểm
+  + Đúng 2 ý = 0.25 điểm
+  + Đúng 3 ý = 0.5 điểm
+  + Đúng 4 ý = 1.0 điểm
+
+Phần III:
+- Trả lời ngắn
+- Toán: 0.5 điểm/câu
+- Môn khác: 0.25 điểm/câu
+
+
+[CÔNG THỨC TÍNH ĐIỂM XÉT TỐT NGHIỆP (DXTN)]
+
+Điểm học bạ (50%):
+- ĐTB các năm học = [(ĐTB lớp 10 x 1) + (ĐTB lớp 11 x 2) + (ĐTB lớp 12 x 3)] / 6
+
+Công thức tính DXTN:
+DXTN = {[(Tổng điểm 4 môn thi + Tổng điểm khuyến khích) / 4] + ĐTB các năm học} / 2 + Điểm ưu tiên (nếu có)
+
+Điều kiện đỗ:
+- DXTN >= 5.0
+- Không có môn thi nào bị điểm liệt (<= 1.0)
+
+
+[LƯU Ý VỀ MIỄN THI NGOẠI NGỮ VÀ ĐIỂM CỘNG]
+
+Chứng chỉ IELTS/TOEFL:
+- Chỉ dùng để miễn thi xét đỗ tốt nghiệp
+- Không được quy đổi thành điểm 10 để xét đại học
+- Muốn có điểm xét đại học phải thi thực tế
+
+Điểm khuyến khích:
+- Cộng cho giải HSG Tỉnh hoặc Quốc gia
+- Giải Thể thao hoặc Văn nghệ
+- Giải Khoa học Kỹ thuật
+- Mức cộng từ 1.0 đến 2.0 điểm
+
+Lưu ý:
+- Không còn cộng điểm cho chứng chỉ nghề
+- Không còn cộng điểm cho chứng chỉ tin học
+
+
+[LỘ TRÌNH HÀNH ĐỘNG]
+
+- Rà soát học bạ lớp 10 và lớp 11 ngay từ bây giờ
+- Chốt 2 môn tự chọn thế mạnh nhất
+- Luyện đề theo dạng trắc nghiệm mới
+- Tập trung luyện dạng Đúng/Sai vì có tính điểm lũy tiến

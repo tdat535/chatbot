@@ -7,7 +7,19 @@
       "Bash(node -e \":*)",
       "Bash(npm uninstall:*)",
       "Bash(dir:*)",
-      "Bash(find '/d/Workspace/crm mini' -not -path */node_modules/* -not -path */__pycache__/* -not -path */venv/* -type d)"
+      "Bash(find '/d/Workspace/crm mini' -not -path */node_modules/* -not -path */__pycache__/* -not -path */venv/* -type d)",
+      "Bash(python -c \"import pdfplumber; print\\('ok'\\)\")",
+      "Bash(python -c \"import pypdf; print\\('ok'\\)\")",
+      "Bash(python -c \"import PyPDF2; print\\('ok'\\)\")",
+      "Bash(python -)",
+      "Bash(python -c \"import groq; print\\('ok'\\)\")",
+      "Bash(python reformat_ctdt.py)",
+      "Bash(python -c ' *)",
+      "Bash(python parse_thongtin.py)",
+      "Bash(pip install *)",
+      "Bash(python -c \"import sys; sys.stdout.buffer.write\\(sys.stdin.buffer.read\\(\\)\\)\")",
+      "Bash(python -m pip install openpyxl -q)",
+      "Bash(python parse_excel_nganh.py)"
     ]
   }
 }

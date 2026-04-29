@@ -1,0 +1,54 @@
+[THÔNG TIN NGÀNH - QUẢN TRỊ KINH DOANH]
+Ngành: Quản Trị Kinh Doanh
+Mã ngành: 6340404
+Trường: Cao đẳng Viễn Đông, TP.HCM
+
+[MÔN HỌC CHUNG - QUẢN TRỊ KINH DOANH]
+Ngành Quản Trị Kinh Doanh - Các môn học chung: 16 tín chỉ, 435 giờ
+- MH01 Chính trị (5 TC, 75 giờ: 41 LT, 29 TH, 5 KT)
+- MH02 Pháp luật (2 TC, 30 giờ: 18 LT, 10 TH, 2 KT)
+- MH03 Giáo dục thể chất (0 TC, 60 giờ: 5 LT, 51 TH, 4 KT)
+- MH04 Giáo dục Quốc phòng và An ninh (0 TC, 75 giờ: 36 LT, 35 TH, 4 KT)
+- MH05 Tin học (3 TC, 75 giờ: 15 LT, 58 TH, 2 KT)
+- MH06 Ngoại ngữ (6 TC, 120 giờ: 42 LT, 72 TH, 6 KT)
+
+[MÔN CƠ SỞ NGÀNH - QUẢN TRỊ KINH DOANH]
+Ngành Quản Trị Kinh Doanh - Môn cơ sở: 1 tín chỉ, 57 giờ
+- MĐ07 Digital Marketing (2 TC, 30 giờ: 21 LT, 7 TH, 2 KT)
+- MH08 Marketing khởi nghiệp (3 TC, 45 giờ: 42 LT, 0 TH, 3 KT)
+- MH09 Quản trị học (3 TC, 60 giờ: 28 LT, 28 TH, 4 KT)
+- MH10 Nguyên lý kế toán (3 TC, 60 giờ: 28 LT, 28 TH, 4 KT)
+- MĐ11 Kỹ năng giao tiếp (2 TC, 45 giờ: 14 LT, 28 TH, 3 KT)
+- MH12 Kinh tế vi mô & vĩ mô (2 TC, 45 giờ: 14 LT, 28 TH, 3 KT)
+- MH13 Tài chính doanh nghiệp (3 TC, 75 giờ: 14 LT, 56 TH, 5 KT)
+- MH14 Nghiệp vụ hành chính văn phòng (2 TC, 45 giờ: 14 LT, 28 TH, 3 KT)
+- MH15 Quan hệ công chúng (2 TC, 30 giờ: 28 LT, 0 TH, 2 KT)
+- MH16 Quản trị nhân sự (3 TC, 45 giờ: 42 LT, 0 TH, 3 KT)
+- MH19 Tâm lý khách hàng (2 TC, 45 giờ: 14 LT, 28 TH, 3 KT)
+- MH20 Phát triển bền vững (2 TC, 30 giờ: 18 LT, 10 TH, 2 KT)
+- MH21 Quản trị và tổ chức sự kiện (2 TC, 45 giờ: 14 LT, 28 TH, 3 KT)
+- MH22 Quản trị vận hành (3 TC, 60 giờ: 28 LT, 28 TH, 4 KT)
+- MH23 Thống kê trong kinh doanh (2 TC, 45 giờ: 14 LT, 28 TH, 3 KT)
+- MH24 Lập kế hoạch kinh doanh (3 TC, 45 giờ: 42 LT, 0 TH, 3 KT)
+- MH25 Logitics và chuỗi cung ứng (2 TC, 45 giờ: 14 LT, 28 TH, 3 KT)
+- MH26 Thẩm định dự án (3 TC, 45 giờ: 42 LT, 0 TH, 3 KT)
+- MH27 Kế toán quản trị (3 TC, 45 giờ: 42 LT, 0 TH, 3 KT)
+- MH28 Hành vi tổ chức (2 TC, 45 giờ: 14 LT, 28 TH, 3 KT)
+- MH29 Giao tiếp kinh doanh (3 TC, 45 giờ: 42 LT, 0 TH, 3 KT)
+- MH30 Kinh doanh quốc tế (2 TC, 45 giờ: 14 LT, 28 TH, 3 KT)
+
+[MÔN CHUYÊN MÔN - QUẢN TRỊ KINH DOANH]
+Ngành Quản Trị Kinh Doanh - Môn chuyên môn:
+- MH31 Quản trị chất lượng (2 TC, 30 giờ: 28 LT, 0 TH, 2 KT)
+- MH32 Quản trị sự thay đổi (2 TC, 45 giờ: 14 LT, 28 TH, 3 KT)
+- MH33 Hệ thống thông tin quản lý (2 TC, 45 giờ: 14 LT, 28 TH, 3 KT)
+- MĐ35 Công nghệ tài chính (Fintech) (3 TC, 60 giờ: 28 LT, 28 TH, 4 KT)
+- MH36 Hệ thống thuế Việt Nam (3 TC, 45 giờ: 42 LT, 0 TH, 3 KT)
+- MĐ37 Digital Application (2 TC, 30 giờ: 28 LT, 0 TH, 2 KT)
+- MH38 Thực hành thị trường tài chính (1 TC, 30 giờ: 0 LT, 28 TH, 2 KT)
+- MĐ39 Thực tập thực tế (5 TC, 225 giờ: 0 LT, 215 TH, 10 KT)
+- MĐ40 Thực tập tốt nghiệp (6 TC, 270 giờ: 0 LT, 258 TH, 12 KT)
+
+[TỔNG KẾT CHƯƠNG TRÌNH - QUẢN TRỊ KINH DOANH]
+Ngành Quản Trị Kinh Doanh () tại Trường Cao đẳng Viễn Đông.
+Tổng: 102 tín chỉ, 2310 giờ học (896 giờ lý thuyết, 1277 giờ thực hành, 137 giờ kiểm tra)

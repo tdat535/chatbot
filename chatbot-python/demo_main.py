@@ -2,12 +2,16 @@ import os
 import re
 import faiss
 import numpy as np
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
 from groq import Groq
 from dotenv import load_dotenv
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 # =============================
 # Load ENV
@@ -28,7 +32,11 @@ CHUNKS_PATH = os.path.join(STORAGE_DIR, "chunks.txt")
 # =============================
 # FastAPI Init
 # =============================
+limiter = Limiter(key_func=get_remote_address)
+
 app = FastAPI(title="Viendong Chatbot API")
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
@@ -171,8 +179,25 @@ def get_chunks():
 # =============================
 # Main Ask Endpoint
 # =============================
+def extract_last_question(text: str) -> str:
+    """Lấy câu hỏi cuối cùng của học sinh từ conversation context."""
+    lines = text.strip().split('\n')
+    # Tìm dòng cuối cùng của học sinh
+    for line in reversed(lines):
+        line = line.strip()
+        if line.startswith('Học sinh:'):
+            return line[len('Học sinh:'):].strip()
+    # Fallback: lấy dòng cuối cùng không rỗng
+    for line in reversed(lines):
+        if line.strip():
+            return line.strip()
+    return text.strip()
+
+
 @app.get("/ask")
-def ask(question: str):
+@limiter.limit("20/minute")
+async def ask(request: Request, question: str):
+    import asyncio
 
     if not question.strip():
         return {"answer": "Bạn hỏi mình gì đó đi chứ 😄"}
@@ -180,8 +205,12 @@ def ask(question: str):
     if index is None or not documents:
         return {"answer": "Bot chưa được huấn luyện dữ liệu. Vui lòng upload tài liệu trong phần Huấn luyện Bot nhé!"}
 
+    # Tách câu hỏi thực sự để search (không search cả đoạn hội thoại)
+    search_query = extract_last_question(question)
+
     try:
-        search_results = search_documents(question)
+        loop = asyncio.get_event_loop()
+        search_results = await loop.run_in_executor(None, search_documents, search_query)
 
         if not search_results:
             return {
@@ -247,7 +276,7 @@ Sai: "...Nếu bạn muốn đặt lịch tư vấn 1:1 miễn phí, tôi có th
                 }
             ],
             temperature=0.1,
-            max_tokens=700
+            max_tokens=400
         )
 
         answer = response.choices[0].message.content.strip()
@@ -269,7 +298,8 @@ class TrainUrlBody(BaseModel):
 
 @app.post("/train-url")
 @app.post("/chatbot/train-url")
-async def train_url(body: TrainUrlBody):
+@limiter.limit("5/minute")
+async def train_url(request: Request, body: TrainUrlBody):
     """Scrape một trang web và train từ nội dung đó."""
     import requests
     from bs4 import BeautifulSoup
@@ -323,9 +353,12 @@ async def train_url(body: TrainUrlBody):
 # =============================
 # Training Endpoint — File
 # =============================
+MAX_UPLOAD_BYTES = 10 * 1024 * 1024  # 10MB
+
 @app.post("/train")
 @app.post("/chatbot/train")
-async def train_upload(file: UploadFile = File(...)):
+@limiter.limit("5/minute")
+async def train_upload(request: Request, file: UploadFile = File(...)):
     """Upload file TXT hoặc PDF, lưu vào data-txt, rebuild FAISS index."""
     filename = file.filename or "uploaded.txt"
     ext = os.path.splitext(filename)[1].lower()
@@ -335,6 +368,9 @@ async def train_upload(file: UploadFile = File(...)):
 
     os.makedirs(DATA_FOLDER, exist_ok=True)
     content_bytes = await file.read()
+
+    if len(content_bytes) > MAX_UPLOAD_BYTES:
+        raise HTTPException(status_code=413, detail=f"File quá lớn (tối đa {MAX_UPLOAD_BYTES // 1024 // 1024}MB)")
 
     if ext == ".pdf":
         try:

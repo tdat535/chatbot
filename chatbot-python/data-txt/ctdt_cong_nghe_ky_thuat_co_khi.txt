@@ -1,0 +1,71 @@
+[THÔNG TIN NGÀNH - CÔNG NGHỆ KỸ THUẬT CƠ KHÍ CAO ĐẲNG]
+Ngành: Công nghệ kỹ thuật Cơ Khí
+Mã ngành: 6510201
+Trình độ: cao đẳng
+Hình thức đào tạo: chính quy
+Đối tượng tuyển sinh: Tốt nghiệp Trung học phổ thông hoặc tương đương
+Thời gian đào tạo: 2,5 năm
+Trường: Cao đẳng Viễn Đông, TP.HCM
+
+[MỤC TIÊU ĐÀO TẠO - CÔNG NGHỆ KỸ THUẬT CƠ KHÍ CAO ĐẲNG]
+1. Mục tiêu đào tạo
+1.1. Mục tiêu chung:
+Chương trình đào tạo chuyên ngành Kỹ thuật Cơ Khí nhằm mục tiêu đào tạo cử nhân
+Cơ khí có kiến thức khoa học cơ bản, kiến thức cơ sở và chuyên ngành về Cơ khí Chế
+tạo máy; có khả năng phân tích, đánh giá công nghệ, giải quyết vấn đề và đưa ra các giải
+pháp, có năng lực lập kế hoạch, tham gia tổ chức, điều hành và chỉ đạo sản xuất, Ngoài
+ta, người cử nhân cơ khí còn được đào tạo để có phẩm chất chính trị, đạo đức  và sức
+khỏe tốt, có thái độ nghề nghiệp phù hợp, thích ứng với môi trường làm việc chuyên
+nghiệp, hiện đại, sẳn sàng làm việc trong các doanh nghiệp chuyên ngành Cơ khí
+
+[VIỆC LÀM SAU TỐT NGHIỆP - CÔNG NGHỆ KỸ THUẬT CƠ KHÍ CAO ĐẲNG]
+3. Vị trí việc làm sau khi tốt nghiệp:
+SV sau khi tốt nghiệp cao đẳng ngành Kỹ Thuật Cơ Khí, đảm nhận được các công
+việc sau:
+- Thiết kế một số các chi tiết 2D,3D (về CAD/CAM)
+- Làm việc trong các phân xưởng gia công cắt gọt về cơ khí như tiện, phay (trên
+máy vạn năng và máy CNC), các máy dập, cán….
+- Làm được các công việc về gia công chế tạo các phụ kiện cơ khí
+- Làm việc trong các công ty, xí nghiệp về gia công, lắp ráp, bảo trì, sửa chữa, phục
+hồi thiết bị cơ khí;
+- Làm nhân viên phòng kỹ thuật, quản đốc phân xưởng, tổ chức và quản lý quá trình
+sản xuất
+- Kiểm tra bảo dưỡng thiết bị, quản lý, tổ chức sản xuất tại các đơn vị có trang bị
+dây chuyền và thiết bị tự động hóa phục vụ trong lĩnh vực cơ khí chế tạo máy
+- Làm việc ở các cơ quan quản lý có liên quan đến lĩnh vực cơ khí chế tạo máy.
+- Giảng dạy các môn học của chuyên ngành Cơ khí chế tạo máy ở các trường trung
+cấp chuyên nghiệp, hướng nghiệp và dạy nghề
+
+[MÔN HỌC CHUNG - CÔNG NGHỆ KỸ THUẬT CƠ KHÍ CAO ĐẲNG]
+Ngành Công nghệ kỹ thuật Cơ Khí - Các môn học chung: 4 tín chỉ, 1 giờ
+- MH01 Chính trị (5 TC, 75 giờ: 41 LT, 29 TH, 5 KT)
+- MH02 Pháp luật (2 TC, 30 giờ: 18 LT, 10 TH, 2 KT)
+- MH03 Giáo dục thể chất (0 TC, 60 giờ: 5 LT, 51 TH, 4 KT)
+- MH05 Tin học (3 TC, 75 giờ: 15 LT, 58 TH, 2 KT)
+- MH06 Ngoại ngữ (6 TC, 120 giờ: 42 LT, 72 TH, 6 KT)
+
+[MÔN CHUYÊN MÔN - CÔNG NGHỆ KỸ THUẬT CƠ KHÍ CAO ĐẲNG]
+Ngành Công nghệ kỹ thuật Cơ Khí - Môn chuyên môn:
+- MH08 Dung sai kỹ thuật đo (2 TC, 30 giờ: 28 LT, 0 TH, 2 KT)
+- MĐ09 Vẽ kỹ thuật (2 TC, 45 giờ: 14 LT, 28 TH, 3 KT)
+- MH10 Toán ứng dụng (3 TC, 60 giờ: 28 LT, 28 TH, 4 KT)
+- MĐ11 Thực tập Hàn (2 TC, 60 giờ: 0 LT, 56 TH, 4 KT)
+- MĐ12 Thực tập Nguội (2 TC, 60 giờ: 0 LT, 56 TH, 4 KT)
+- MH13 Công nghệ chế tạo phôi (3 TC, 45 giờ: 42 LT, 0 TH, 3 KT)
+- MH14 Đồ gá và dụng cụ cắt (3 TC, 45 giờ: 42 LT, 0 TH, 3 KT)
+- MĐ16 Thực tập nguội (2 TC, 60 giờ: 0 LT, 56 TH, 4 KT)
+- MĐ17 Thực tập Tiện (4 TC, 120 giờ: 0 LT, 112 TH, 8 KT)
+- MĐ18 Thực tập thực tế (1 TC, 30 giờ: 0 LT, 28 TH, 2 KT)
+- MH20 Autocad (2 TC, 45 giờ: 14 LT, 28 TH, 3 KT)
+- MH21 Cơ lý thuyết (2 TC, 45 giờ: 14 LT, 28 TH, 3 KT)
+- MĐ24 Thực tập hàn (2 TC, 60 giờ: 0 LT, 56 TH, 4 KT)
+- MĐ25 Thực tập tiện (3 TC, 90 giờ: 0 LT, 84 TH, 6 KT)
+- MĐ26 Vẽ kỹ thuật (3 TC, 45 giờ: 42 LT, 0 TH, 3 KT)
+- MH27 Máy cắt kim loại (3 TC, 45 giờ: 42 LT, 0 TH, 3 KT)
+- MĐ28 Thực tập phay (4 TC, 120 giờ: 0 LT, 112 TH, 8 KT)
+- MH30 Nguyên lý chi tiết máy (2 TC, 45 giờ: 14 LT, 28 TH, 3 KT)
+- MH31 Công nghệ CNC (3 TC, 60 giờ: 28 LT, 28 TH, 4 KT)
+- MH32 Thực tập phay (3 TC, 90 giờ: 0 LT, 84 TH, 6 KT)
+- MH33 Công nghệ CAD/CAM (3 TC, 60 giờ: 28 LT, 28 TH, 4 KT)
+- MĐ35 Thực tập tốt nghiệp (5 TC, 225 giờ: 0 LT, 215 TH, 10 KT)
+- MĐ36 Khóa luận tốt nghiệp (6 TC, 270 giờ: 0 LT, 258 TH, 12 KT)

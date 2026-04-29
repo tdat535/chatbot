@@ -72,8 +72,14 @@ export default function BotTraining() {
     setUrlLoading(false);
   };
 
+  const MAX_FILE_MB = 10;
+
   const handleUpload = async () => {
     if (!file) return;
+    if (file.size > MAX_FILE_MB * 1024 * 1024) {
+      setResult({ ok: false, error: `File quá lớn (tối đa ${MAX_FILE_MB}MB)` });
+      return;
+    }
     setUploading(true);
     setResult(null);
     try {
