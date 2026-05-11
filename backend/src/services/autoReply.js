@@ -72,58 +72,56 @@ async function handleIncomingMessage({ channel, channelUserId, senderName, messa
   const fullConversation = await getConversationWithCustomer(conversation.id);
   if (io) io.emit('new_message', { conversation: fullConversation, message: incomingMsg });
 
-  // 4. Thu thập tên + SĐT nếu chưa có
+  // 4. Thu thập tên + SĐT
   const autoReplyGlobal = process.env.AUTO_REPLY_ENABLED !== 'false';
   const autoReplyConv = conversation.auto_reply !== 0;
 
-  if (autoReplyGlobal && autoReplyConv && !customer.phone) {
-    const state = collectionState.get(customerId);
+  if (autoReplyGlobal && autoReplyConv) {
     const phoneRegex = /^(0|\+84)[0-9]{8,9}$/;
+    const state = collectionState.get(customerId);
+    let phoneJustSaved = false;
+    let appendPhoneRequest = false;
 
-    if (!state) {
-      // Facebook/Zalo đã có tên từ platform → chỉ hỏi SĐT
-      const needName = channel === 'website' && (!customer.name || customer.name === 'Khách hàng');
-      if (needName) {
+    // Website: hỏi tên trước (blocking vì không thể tự đoán tên)
+    if (channel === 'website' && (!customer.name || customer.name === 'Khách hàng')) {
+      if (!state) {
         collectionState.set(customerId, 'waiting_name');
         const { conv, msg } = await sendBotReply(channel, channelUserId, conversation.id,
           'Xin chào! Mình là trợ lý tư vấn tuyển sinh Cao đẳng Viễn Đông 😊 Cho mình biết tên bạn với nhé?', io);
         return { conversation: conv, incomingMsg, replyMsg: msg };
-      } else {
+      }
+      if (state === 'waiting_name') {
+        const name = message.trim();
+        await db.run('UPDATE customers SET name = ? WHERE id = ?', [name, customerId]);
+        customer.name = name;
         collectionState.set(customerId, 'waiting_phone');
-        const displayName = customer.name && !customer.name.startsWith('FB_') ? customer.name : 'bạn';
-        const { conv, msg } = await sendBotReply(channel, channelUserId, conversation.id,
-          `Xin chào ${displayName}! Cho mình xin số điện thoại của bạn để tiện liên hệ nhé 😊`, io);
-        return { conversation: conv, incomingMsg, replyMsg: msg };
+        appendPhoneRequest = true;
       }
     }
 
-    if (state === 'waiting_name') {
-      const name = message.trim();
-      await db.run('UPDATE customers SET name = ? WHERE id = ?', [name, customerId]);
-      collectionState.set(customerId, 'waiting_phone');
-      const { conv, msg } = await sendBotReply(channel, channelUserId, conversation.id,
-        `Cảm ơn ${name}! Cho mình xin số điện thoại của bạn nữa nhé 📞`, io);
-      return { conversation: conv, incomingMsg, replyMsg: msg };
-    }
+    // SĐT: thu thập passive — không chặn hội thoại
+    if (!customer.phone && !appendPhoneRequest) {
+      const phoneMatch = message.match(/(0|\+84)[0-9]{8,9}/);
 
-    if (state === 'waiting_phone') {
-      const extracted = message.match(/(0|\+84)[0-9]{8,9}/);
-      const phone = extracted ? extracted[0] : message.trim();
-      if (!phoneRegex.test(phone)) {
-        const { conv, msg } = await sendBotReply(channel, channelUserId, conversation.id,
-          'Số điện thoại chưa đúng định dạng rồi 😅 Bạn nhập lại giúp mình nhé! (VD: 0912345678)', io);
-        return { conversation: conv, incomingMsg, replyMsg: msg };
+      if (state === 'waiting_phone' && phoneMatch && phoneRegex.test(phoneMatch[0])) {
+        await db.run('UPDATE customers SET phone = ? WHERE id = ?', [phoneMatch[0], customerId]);
+        collectionState.delete(customerId);
+        phoneJustSaved = true;
+
+        // Nếu tin nhắn chỉ có SĐT → xác nhận ngắn rồi thôi
+        if (phoneRegex.test(message.trim())) {
+          const displayName = customer.name && !customer.name.startsWith('FB_') ? customer.name : 'bạn';
+          const { conv, msg } = await sendBotReply(channel, channelUserId, conversation.id,
+            `Cảm ơn ${displayName}! Mình đã lưu SĐT của bạn rồi 😊 Cứ hỏi thêm gì về tuyển sinh nhé!`, io);
+          return { conversation: conv, incomingMsg, replyMsg: msg };
+        }
+      } else if (!state) {
+        collectionState.set(customerId, 'waiting_phone');
+        appendPhoneRequest = true;
       }
-      await db.run('UPDATE customers SET phone = ? WHERE id = ?', [phone, customerId]);
-      collectionState.delete(customerId);
-      const { conv, msg } = await sendBotReply(channel, channelUserId, conversation.id,
-        'Cảm ơn bạn! Giờ bạn cứ hỏi gì về tuyển sinh mình trả lời liền nhé 😊', io);
-      return { conversation: conv, incomingMsg, replyMsg: msg };
     }
-  }
 
-  // 5. Auto-reply via AI chatbot
-  if (autoReplyGlobal && autoReplyConv) {
+    // 5. Auto-reply via AI chatbot
     // Lấy 3 tin nhắn gần nhất để làm context cho câu hỏi ngắn/mơ hồ
     const recentMsgs = await db.query(
       "SELECT content, direction FROM messages WHERE conversation_id = ? AND type = 'text' ORDER BY id DESC LIMIT 4",
@@ -145,6 +143,11 @@ async function handleIncomingMessage({ channel, channelUserId, senderName, messa
       } catch {}
     }
     if (answer) {
+      const displayName = customer.name && !customer.name.startsWith('FB_') ? customer.name : 'bạn';
+      if (phoneJustSaved) {
+        answer = `Cảm ơn bạn đã cho mình SĐT rồi nhé! 😊\n\n${answer}`;
+      }
+
       if (channel === 'facebook') await sendFacebookMessage(channelUserId, answer);
       else if (channel === 'zalo') await sendZaloMessage(channelUserId, answer);
 
@@ -161,6 +164,12 @@ async function handleIncomingMessage({ channel, channelUserId, senderName, messa
 
       const updatedConv = await getConversationWithCustomer(conversation.id);
       if (io) io.emit('new_message', { conversation: updatedConv, message: replyMsg });
+
+      // Gửi tin nhắn hỏi SĐT riêng sau câu trả lời
+      if (appendPhoneRequest) {
+        await sendBotReply(channel, channelUserId, conversation.id,
+          `À, bạn cho mình xin số điện thoại để tiện liên hệ thêm nhé? 😊`, io);
+      }
 
       return { conversation: updatedConv, incomingMsg, replyMsg };
     }
