@@ -180,18 +180,29 @@ def get_chunks():
 # Main Ask Endpoint
 # =============================
 def extract_last_question(text: str) -> str:
-    """Lấy câu hỏi cuối cùng của học sinh từ conversation context."""
+    """Build search query từ conversation context.
+    Nếu câu hỏi cuối ngắn/mơ hồ, gộp với câu trước để giữ chủ đề."""
     lines = text.strip().split('\n')
-    # Tìm dòng cuối cùng của học sinh
-    for line in reversed(lines):
+    student_lines = []
+    for line in lines:
         line = line.strip()
         if line.startswith('Học sinh:'):
-            return line[len('Học sinh:'):].strip()
-    # Fallback: lấy dòng cuối cùng không rỗng
-    for line in reversed(lines):
-        if line.strip():
-            return line.strip()
-    return text.strip()
+            student_lines.append(line[len('Học sinh:'):].strip())
+
+    if not student_lines:
+        # Fallback: lấy dòng cuối cùng không rỗng
+        for line in reversed(lines):
+            if line.strip():
+                return line.strip()
+        return text.strip()
+
+    last_q = student_lines[-1]
+
+    # Câu ngắn/mơ hồ → gộp với câu trước để giữ topic (vd: "CNTT", "Cơ khí")
+    if len(last_q) < 40 and len(student_lines) >= 2:
+        return f"{student_lines[-2]} {last_q}"
+
+    return last_q
 
 
 @app.get("/ask")
