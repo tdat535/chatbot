@@ -80,7 +80,6 @@ async function handleIncomingMessage({ channel, channelUserId, senderName, messa
     const phoneRegex = /^(0|\+84)[0-9]{8,9}$/;
     const state = collectionState.get(customerId);
     let phoneJustSaved = false;
-    let appendPhoneRequest = false;
 
     // Website: hỏi tên trước (blocking vì không thể tự đoán tên)
     if (channel === 'website' && (!customer.name || customer.name === 'Khách hàng')) {
@@ -94,18 +93,16 @@ async function handleIncomingMessage({ channel, channelUserId, senderName, messa
         const name = message.trim();
         await db.run('UPDATE customers SET name = ? WHERE id = ?', [name, customerId]);
         customer.name = name;
-        collectionState.set(customerId, 'waiting_phone');
-        appendPhoneRequest = true;
+        collectionState.delete(customerId);
       }
     }
 
-    // SĐT: thu thập passive — không chặn hội thoại
-    if (!customer.phone && !appendPhoneRequest) {
+    // SĐT: lưu passively nếu user tự nhắn vào, không chủ động hỏi
+    if (!customer.phone) {
       const phoneMatch = message.match(/(0|\+84)[0-9]{8,9}/);
-
-      if (state === 'waiting_phone' && phoneMatch && phoneRegex.test(phoneMatch[0])) {
+      if (phoneMatch && phoneRegex.test(phoneMatch[0])) {
         await db.run('UPDATE customers SET phone = ? WHERE id = ?', [phoneMatch[0], customerId]);
-        collectionState.delete(customerId);
+        customer.phone = phoneMatch[0];
         phoneJustSaved = true;
 
         // Nếu tin nhắn chỉ có SĐT → xác nhận ngắn rồi thôi
@@ -115,9 +112,6 @@ async function handleIncomingMessage({ channel, channelUserId, senderName, messa
             `Cảm ơn ${displayName}! Mình đã lưu SĐT của bạn rồi 😊 Cứ hỏi thêm gì về tuyển sinh nhé!`, io);
           return { conversation: conv, incomingMsg, replyMsg: msg };
         }
-      } else if (!state) {
-        collectionState.set(customerId, 'waiting_phone');
-        appendPhoneRequest = true;
       }
     }
 
@@ -164,12 +158,6 @@ async function handleIncomingMessage({ channel, channelUserId, senderName, messa
 
       const updatedConv = await getConversationWithCustomer(conversation.id);
       if (io) io.emit('new_message', { conversation: updatedConv, message: replyMsg });
-
-      // Gửi tin nhắn hỏi SĐT riêng sau câu trả lời
-      if (appendPhoneRequest) {
-        await sendBotReply(channel, channelUserId, conversation.id,
-          `À, bạn cho mình xin số điện thoại để tiện liên hệ thêm nhé? 😊`, io);
-      }
 
       return { conversation: updatedConv, incomingMsg, replyMsg };
     }
