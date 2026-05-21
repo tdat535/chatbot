@@ -78,7 +78,15 @@ else:
 # =============================
 # Helper: Search Function
 # =============================
-def search_documents(question: str, top_k: int = 6):
+KEYWORD_BOOST_GROUPS = [
+    (["học phí", "hoc phi", "chi phí", "chi phi", "đóng tiền", "dong tien", "phương án", "phuong an", "pa1", "pa2", "gia tien", "giá tiền"],
+     ["học phí", "PA1", "PA2", "phương án", "HK", "đồng/HK", "cấp bù"]),
+    (["ngành", "nganh", "xét tuyển", "xet tuyen", "tuyển sinh", "tuyen sinh", "đăng ký", "dang ky"],
+     ["ngành", "tuyển sinh", "xét tuyển"]),
+]
+
+def search_documents(question: str, top_k: int = 12):
+    query_lower = question.lower()
 
     query_vector = embed_model.encode(
         ["query: " + question],
@@ -92,6 +100,19 @@ def search_documents(question: str, top_k: int = 6):
     for score, idx in zip(D[0], I[0]):
         if 0 <= idx < len(documents):
             results.append((score, documents[idx]))
+
+    # Keyword boost: nếu câu hỏi chứa từ khoá nhóm, ưu tiên chunk liên quan
+    for trigger_keywords, content_keywords in KEYWORD_BOOST_GROUPS:
+        if any(kw in query_lower for kw in trigger_keywords):
+            boosted = []
+            for score, doc in results:
+                doc_lower = doc.lower()
+                if any(kw.lower() in doc_lower for kw in content_keywords):
+                    boosted.append((score + 0.05, doc))
+                else:
+                    boosted.append((score, doc))
+            results = sorted(boosted, key=lambda x: x[0], reverse=True)
+            break
 
     return results
 
@@ -242,19 +263,70 @@ async def ask(request: Request, question: str):
         context_chunks = [doc for _, doc in good_results[:5]]
         context = "\n\n---\n\n".join(context_chunks)
 
-        response = client.chat.completions.create(
-            model="meta-llama/llama-4-scout-17b-16e-instruct",
-            messages=[
-                {
-                    "role": "system",
-                    "content": """Bạn là trợ lý tư vấn tuyển sinh của Trường Cao đẳng Viễn Đông.
+        TUITION_KEYWORDS = ["học phí", "hoc phi", "chi phí", "đóng tiền", "phương án", "pa1", "pa2", "đóng bao nhiêu", "tốn bao nhiêu", "mất bao nhiêu"]
+        is_tuition_q = any(kw in search_query.lower() for kw in TUITION_KEYWORDS)
+
+        # Bypass LLM cho câu hỏi học phí — trả thẳng text từ chunk để tránh hallucinate số tiền
+        if is_tuition_q:
+            def detect_system(chunk):
+                low = chunk.lower()
+                if "cd18" in low or "cđ18" in low or "chính quy" in low:
+                    return "CD18"
+                if "cd15" in low or "9+3+1" in low:
+                    return "CD15"
+                return "unknown"
+
+            def extract_pa_sections(chunk):
+                """Trả về list (heading, pa1_line, pa2_line) từ một chunk."""
+                sections = []
+                paragraphs = [p.strip() for p in re.split(r'\n\n+', chunk) if p.strip()]
+                for para in paragraphs:
+                    lines = [l.strip() for l in para.splitlines() if l.strip()]
+                    pa1 = next((l for l in lines if l.lower().startswith("- pa1") or l.lower().startswith("pa1")), None)
+                    pa2 = next((l for l in lines if l.lower().startswith("- pa2") or l.lower().startswith("pa2")), None)
+                    if pa1 and pa2:
+                        heading = next((l for l in lines if not l.startswith("[") and "pa1" not in l.lower() and "pa2" not in l.lower() and len(l) > 5), "")
+                        sections.append((heading, pa1, pa2))
+                return sections
+
+            pa_chunks = [(s, d) for s, d in search_results if "pa1" in d.lower() and "pa2" in d.lower()]
+            if pa_chunks:
+                cd18_parts, cd15_parts = [], []
+                for _, chunk in pa_chunks[:6]:
+                    system = detect_system(chunk)
+                    for heading, pa1, pa2 in extract_pa_sections(chunk):
+                        entry = f"{heading}\n{pa1}\n{pa2}" if heading else f"{pa1}\n{pa2}"
+                        if system == "CD18" and entry not in cd18_parts:
+                            cd18_parts.append(entry)
+                        elif system == "CD15" and entry not in cd15_parts:
+                            cd15_parts.append(entry)
+
+                if cd18_parts or cd15_parts:
+                    out = ["Có 2 phương án đóng học phí, PH chọn 1 trong 2 đều được nha 💰"]
+                    if cd18_parts:
+                        out.append("\nHệ Cao đẳng chính quy (CĐ18):")
+                        out.extend(cd18_parts[:2])
+                    if cd15_parts:
+                        out.append("\nHệ 9+3+1 - Học nghề (CD15):")
+                        out.extend(cd15_parts[:2])
+                    out.append("\nMỗi HK chia đóng 2-3 lần, đợt 1 HK1 tối thiểu 5 triệu nha.")
+                    return {"answer": "\n".join(out)}
+
+            return {"answer": "Mình chưa tìm thấy thông tin học phí cụ thể cho ngành này 🤔 Bạn nhắn Zalo 0922334400 (Cô Thơ) hoặc 0977334400 (Cô Thu) để được báo giá chi tiết theo 2 PA nha!"}
+
+        messages = [
+            {
+                "role": "system",
+                "content": """Bạn là trợ lý tư vấn tuyển sinh của Trường Cao đẳng Viễn Đông.
 
 NHIỆM VỤ: Trả lời câu hỏi của học sinh/phụ huynh về tuyển sinh, học phí, ngành học, lịch thi, thủ tục nhập học.
 
-PHONG CÁCH:
-- Thân thiện, gần gũi như người anh/chị tư vấn thật
-- Dùng ngôn ngữ tự nhiên, không cứng nhắc
-- Có thể dùng emoji vừa phải để tạo cảm giác thân thiện
+PHONG CÁCH — GEN Z:
+- Nói chuyện như người anh/chị Gen Z tư vấn thật: tự nhiên, gần gũi, không văn phòng
+- Dùng ngôn ngữ Gen Z tự nhiên: "thì", "nha", "á", "oke", "chill", "ez", "btw"... nhưng vẫn rõ ràng, không lố
+- Emoji vừa đủ (1-2 cái/câu), không spam
+- NGẮN GỌN là ưu tiên số 1: đủ ý, không dài dòng, không giải thích thừa
+- Không mở đầu bằng "Chào bạn!" hay "Xin chào!" mỗi câu — chỉ trả lời thẳng vào vấn đề
 
 ĐỊNH DẠNG VĂN BẢN:
 - TUYỆT ĐỐI KHÔNG dùng ký tự markdown: *, **, #, ##, _
@@ -269,29 +341,44 @@ QUY TẮC BẮT BUỘC:
 - KHÔNG suy luận hoặc ghép thông tin từ nhiều phần không liên quan để đưa ra câu trả lời mới
 - KHÔNG tự ý đề xuất dịch vụ không có thật như "tư vấn 1:1", "đặt lịch tư vấn", "đăng ký miễn phí" — chỉ hướng dẫn liên hệ qua Zalo/SĐT nếu cần hỗ trợ thêm
 - CHỈ trả lời đúng câu hỏi được hỏi. KHÔNG tự ý thêm thông tin ngoài lề (liên thông ĐH, ưu đãi, v.v.) khi người dùng không hỏi đến
+- KHI trả lời về học phí: LUÔN trình bày đủ 2 phương án PA1 và PA2 theo đúng format trong context. KHÔNG chỉ nêu 1 mức học phí chung chung. Câu mở đầu bắt buộc là: "Có 2 phương án đóng học phí, PH chọn 1 trong 2 phương án đều được ạ"
+- SỐ TIỀN HỌC PHÍ: PHẢI lấy đúng 100% từ [CONTEXT]. TUYỆT ĐỐI KHÔNG tự điền số tiền nếu không thấy trong context. Nếu context không có số tiền cụ thể → nói "liên hệ Cô Thơ 0922334400 hoặc Cô Thu 0977334400 để biết mức học phí chính xác".
 - KHÔNG hỏi ngược lại "Bạn muốn tôi hỗ trợ thêm như thế nào?" hay "Bạn có muốn... không?" — trả lời xong là kết thúc, không kéo dài
 - KHÔNG trả lời về chủ đề không liên quan đến nhà trường
 
-VÍ DỤ SAI (KHÔNG làm theo):
+VÍ DỤ ĐÚNG về học phí (bắt buộc làm theo format này):
+Hỏi: "Học phí ngành Kế toán?"
+Đúng: "Có 2 phương án đóng học phí, PH chọn 1 trong 2 phương án đều được ạ
+- PA1: đóng 11.000.000 đồng/HK, nhà nước không có cấp bù riêng cho khối kinh tế
+- PA2: đóng 11.000.000 đồng/HK (học phí trọn khóa 6 HK: 68.000.000 đồng)"
+
+VÍ DỤ SAI về học phí (KHÔNG làm theo):
+Sai: "Học phí ngành Kế toán là 10.000.000đ/năm" — SAI vì tự bịa số tiền và không có 2 PA
+
+VÍ DỤ SAI về format (KHÔNG làm theo):
 Hỏi: "Khối Kinh tế có những ngành gì?"
 Sai: "...Nếu bạn muốn đặt lịch tư vấn 1:1 miễn phí, tôi có thể giúp bạn liên hệ với phòng tuyển sinh. Bạn muốn tôi hỗ trợ thêm như thế nào?"
 Đúng: Liệt kê các ngành rồi dừng. Nếu muốn hỏi thêm có thể nhắn Zalo 0922334400 (Cô Thơ) hoặc 0977334400 (Cô Thu)."""
-                },
-                {
-                    "role": "user",
-                    "content": f"""[CONTEXT]
+            },
+        ]
+
+        messages.append({
+            "role": "user",
+            "content": f"""[CONTEXT]
 {context}
 
 [CÂU HỎI]
 {question}"""
-                }
-            ],
-            temperature=0.1,
-            max_tokens=400
+        })
+
+        response = client.chat.completions.create(
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
+            messages=messages,
+            temperature=0.05,
+            max_tokens=600
         )
 
         answer = response.choices[0].message.content.strip()
-
         return {"answer": answer}
 
     except Exception as e:

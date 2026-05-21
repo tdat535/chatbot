@@ -57,6 +57,9 @@ router.post('/facebook', async (req, res) => {
           [recipientId]
         );
         if (!conv) continue;
+        // Staff đang reply trực tiếp trên FB inbox → tắt bot cho conversation này
+        await db.run('UPDATE conversations SET auto_reply = 0 WHERE id = ?', [conv.id]);
+        if (io) io.emit('auto_reply_changed', { conversationId: conv.id, auto_reply: false });
         const result = await db.run(
           "INSERT INTO messages (conversation_id, content, direction, sent_by, sender_name) VALUES (?, ?, 'out', 'agent', 'Facebook Page')",
           [conv.id, text]

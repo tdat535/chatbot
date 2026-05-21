@@ -106,6 +106,16 @@ export default function ChatView({ conversation, onUpdate, currentUser }) {
   }, [conversation?.id, onUpdate]);
 
   useEffect(() => {
+    const handler = ({ conversationId, auto_reply }) => {
+      if (conversation && conversationId === conversation.id) {
+        setAutoReply(auto_reply);
+      }
+    };
+    socket.on('auto_reply_changed', handler);
+    return () => socket.off('auto_reply_changed', handler);
+  }, [conversation?.id]);
+
+  useEffect(() => {
     const handler = (e) => {
       if (templateRef.current && !templateRef.current.contains(e.target)) setShowTemplates(false);
       if (labelRef.current && !labelRef.current.contains(e.target)) setShowLabelPicker(false);
