@@ -289,10 +289,18 @@ async def ask(request: Request, question: str):
                         sections.append((heading, pa1, pa2))
                 return sections
 
-            pa_chunks = [(s, d) for s, d in search_results if "pa1" in d.lower() and "pa2" in d.lower()]
+            # Scan toàn bộ documents (không giới hạn FAISS top-k)
+            # Ưu tiên chunk khớp từ khoá trong câu hỏi
+            stop = {"học", "phí", "ngành", "hỏi", "muốn", "bao", "nhiêu", "tôi", "của", "cho", "là", "và", "á", "ạ"}
+            subject_kws = [w for w in re.split(r'[\s,\.]+', search_query.lower()) if len(w) > 2 and w not in stop]
+            all_pa = [(doc, sum(1 for kw in subject_kws if kw in doc.lower()))
+                      for doc in documents if "pa1" in doc.lower() and "pa2" in doc.lower()]
+            all_pa.sort(key=lambda x: x[1], reverse=True)
+            pa_chunks = all_pa[:6]
+
             if pa_chunks:
                 cd18_parts, cd15_parts = [], []
-                for _, chunk in pa_chunks[:6]:
+                for chunk, _ in pa_chunks:
                     system = detect_system(chunk)
                     for heading, pa1, pa2 in extract_pa_sections(chunk):
                         entry = f"{heading}\n{pa1}\n{pa2}" if heading else f"{pa1}\n{pa2}"
