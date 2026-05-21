@@ -277,7 +277,6 @@ async def ask(request: Request, question: str):
                 return "unknown"
 
             def extract_pa_sections(chunk):
-                """Trả về list (heading, pa1_line, pa2_line) từ một chunk."""
                 sections = []
                 paragraphs = [p.strip() for p in re.split(r'\n\n+', chunk) if p.strip()]
                 for para in paragraphs:
@@ -289,36 +288,47 @@ async def ask(request: Request, question: str):
                         sections.append((heading, pa1, pa2))
                 return sections
 
-            # Scan toàn bộ documents (không giới hạn FAISS top-k)
-            # Ưu tiên chunk khớp từ khoá trong câu hỏi
-            stop = {"học", "phí", "ngành", "hỏi", "muốn", "bao", "nhiêu", "tôi", "của", "cho", "là", "và", "á", "ạ"}
+            # Detect hệ từ toàn bộ conversation (kể cả lịch sử chat)
+            q_lower = question.lower()
+            wants_cd18 = any(kw in q_lower for kw in ["cd18", "cđ18", "chính quy", "cao đẳng chính quy", "18"])
+            wants_cd15 = any(kw in q_lower for kw in ["cd15", "9+3+1", "học nghề", "15", "vừa học vừa thi"])
+
+            # Chưa rõ hệ → hỏi ngược lại
+            if not wants_cd18 and not wants_cd15:
+                return {"answer": "Trường có 2 hệ đào tạo nha, bạn đang hỏi hệ nào?\n- CĐ18: Cao đẳng chính quy (2.5 năm)\n- CD15: Hệ 9+3+1 vừa học nghề vừa thi tốt nghiệp THPT"}
+
+            # Scan toàn bộ documents, ưu tiên chunk khớp từ khoá ngành
+            stop = {"học", "phí", "ngành", "hỏi", "muốn", "bao", "nhiêu", "tôi", "của", "cho", "là", "và", "á", "ạ", "cd18", "cd15", "hệ"}
             subject_kws = [w for w in re.split(r'[\s,\.]+', search_query.lower()) if len(w) > 2 and w not in stop]
             all_pa = [(doc, sum(1 for kw in subject_kws if kw in doc.lower()))
                       for doc in documents if "pa1" in doc.lower() and "pa2" in doc.lower()]
             all_pa.sort(key=lambda x: x[1], reverse=True)
-            pa_chunks = all_pa[:6]
 
-            if pa_chunks:
-                cd18_parts, cd15_parts = [], []
-                for chunk, _ in pa_chunks:
-                    system = detect_system(chunk)
-                    for heading, pa1, pa2 in extract_pa_sections(chunk):
-                        entry = f"{heading}\n{pa1}\n{pa2}" if heading else f"{pa1}\n{pa2}"
-                        if system == "CD18" and entry not in cd18_parts:
-                            cd18_parts.append(entry)
-                        elif system == "CD15" and entry not in cd15_parts:
-                            cd15_parts.append(entry)
+            cd18_entry, cd15_entry = None, None
+            for chunk, score in all_pa:
+                system = detect_system(chunk)
+                sections = extract_pa_sections(chunk)
+                if not sections:
+                    continue
+                heading, pa1, pa2 = sections[0]
+                entry = f"{heading}\n{pa1}\n{pa2}" if heading else f"{pa1}\n{pa2}"
+                if system == "CD18" and cd18_entry is None:
+                    cd18_entry = entry
+                elif system == "CD15" and cd15_entry is None:
+                    cd15_entry = entry
+                if cd18_entry and cd15_entry:
+                    break
 
-                if cd18_parts or cd15_parts:
-                    out = ["Có 2 phương án đóng học phí, PH chọn 1 trong 2 đều được nha 💰"]
-                    if cd18_parts:
-                        out.append("\nHệ Cao đẳng chính quy (CĐ18):")
-                        out.extend(cd18_parts[:2])
-                    if cd15_parts:
-                        out.append("\nHệ 9+3+1 - Học nghề (CD15):")
-                        out.extend(cd15_parts[:2])
-                    out.append("\nMỗi HK chia đóng 2-3 lần, đợt 1 HK1 tối thiểu 5 triệu nha.")
-                    return {"answer": "\n".join(out)}
+            target = cd18_entry if wants_cd18 else cd15_entry
+            label = "Hệ Cao đẳng chính quy (CĐ18)" if wants_cd18 else "Hệ 9+3+1 - Học nghề (CD15)"
+
+            if target:
+                out = [
+                    f"Học phí {label}, có 2 phương án PH chọn 1 đều được nha 💰",
+                    target,
+                    "\nMỗi HK chia đóng 2-3 lần, đợt 1 HK1 tối thiểu 5 triệu."
+                ]
+                return {"answer": "\n".join(out)}
 
             return {"answer": "Mình chưa tìm thấy thông tin học phí cụ thể cho ngành này 🤔 Bạn nhắn Zalo 0922334400 (Cô Thơ) hoặc 0977334400 (Cô Thu) để được báo giá chi tiết theo 2 PA nha!"}
 
