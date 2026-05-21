@@ -297,35 +297,42 @@ async def ask(request: Request, question: str):
             if not wants_cd18 and not wants_cd15:
                 return {"answer": "Trường có 2 hệ đào tạo nha, bạn đang hỏi hệ nào?\n- CĐ18: Cao đẳng chính quy (2.5 năm)\n- CD15: Hệ 9+3+1 vừa học nghề vừa thi tốt nghiệp THPT"}
 
-            # Scan toàn bộ documents, ưu tiên chunk khớp từ khoá ngành
-            stop = {"học", "phí", "ngành", "hỏi", "muốn", "bao", "nhiêu", "tôi", "của", "cho", "là", "và", "á", "ạ", "cd18", "cd15", "hệ"}
-            subject_kws = [w for w in re.split(r'[\s,\.]+', search_query.lower()) if len(w) > 2 and w not in stop]
-            all_pa = [(doc, sum(1 for kw in subject_kws if kw in doc.lower()))
-                      for doc in documents if "pa1" in doc.lower() and "pa2" in doc.lower()]
-            all_pa.sort(key=lambda x: x[1], reverse=True)
-
-            cd18_entry, cd15_entry = None, None
-            for chunk, score in all_pa:
-                system = detect_system(chunk)
-                sections = extract_pa_sections(chunk)
-                if not sections:
-                    continue
-                heading, pa1, pa2 = sections[0]
-                entry = f"{heading}\n{pa1}\n{pa2}" if heading else f"{pa1}\n{pa2}"
-                if system == "CD18" and cd18_entry is None:
-                    cd18_entry = entry
-                elif system == "CD15" and cd15_entry is None:
-                    cd15_entry = entry
-                if cd18_entry and cd15_entry:
-                    break
-
-            target = cd18_entry if wants_cd18 else cd15_entry
+            target_system = "CD18" if wants_cd18 else "CD15"
             label = "Hệ Cao đẳng chính quy (CĐ18)" if wants_cd18 else "Hệ 9+3+1 - Học nghề (CD15)"
 
-            if target:
+            # Bước 1: dùng FAISS results (đã semantic search) — chính xác nhất
+            target_chunk = None
+            for _, doc in search_results:
+                if "pa1" not in doc.lower() or "pa2" not in doc.lower():
+                    continue
+                if detect_system(doc) != target_system:
+                    continue
+                if extract_pa_sections(doc):
+                    target_chunk = doc
+                    break
+
+            # Bước 2: fallback — scan toàn bộ documents, chỉ lấy chunk có score > 0
+            if not target_chunk:
+                stop = {"học", "phí", "ngành", "hỏi", "muốn", "bao", "nhiêu", "tôi", "của", "cho", "là", "và", "á", "ạ", "cd18", "cd15", "hệ"}
+                subject_kws = [w for w in re.split(r'[\s,\.]+', search_query.lower()) if len(w) > 2 and w not in stop]
+                best_score, best_doc = 0, None
+                for doc in documents:
+                    if "pa1" not in doc.lower() or "pa2" not in doc.lower():
+                        continue
+                    if detect_system(doc) != target_system:
+                        continue
+                    score = sum(1 for kw in subject_kws if kw in doc.lower())
+                    if score > best_score and extract_pa_sections(doc):
+                        best_score, best_doc = score, doc
+                if best_doc:
+                    target_chunk = best_doc
+
+            if target_chunk:
+                heading, pa1, pa2 = extract_pa_sections(target_chunk)[0]
+                entry = f"{heading}\n{pa1}\n{pa2}" if heading else f"{pa1}\n{pa2}"
                 out = [
                     f"Học phí {label}, có 2 phương án PH chọn 1 đều được nha 💰",
-                    target,
+                    entry,
                     "\nMỗi HK chia đóng 2-3 lần, đợt 1 HK1 tối thiểu 5 triệu."
                 ]
                 return {"answer": "\n".join(out)}
