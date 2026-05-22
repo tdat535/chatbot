@@ -883,7 +883,7 @@ KHỐI DỊCH VỤ (liên kết ĐH Mở Hà Nội):
 - Kỹ thuật chế biến món ăn
 - Nghiệp vụ nhà hàng - khách sạn
 
-KHỐI SƯ PHẠM (liên kết ĐH Đồng Nai):
+KHỐI SƯ PHẠM (liên kết ĐH Trà Vinh):
 - Sư phạm mầm non
 - Giáo dục mầm non
 - Tiếng Anh sư phạm
