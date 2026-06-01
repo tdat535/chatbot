@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
-const { handleIncomingMessage } = require('../services/autoReply');
+const { handleIncomingMessage, cancelReEnable } = require('../services/autoReply');
 const { getUserProfile } = require('../services/facebook');
 const db = require('../db');
 
@@ -58,7 +58,8 @@ router.post('/facebook', async (req, res) => {
           [recipientId]
         );
         if (!conv) continue;
-        // Staff đang reply trực tiếp trên FB inbox → tắt bot cho conversation này
+        // Staff đang reply trực tiếp trên FB inbox → tắt bot, hủy timer re-enable
+        cancelReEnable(conv.id);
         await db.run('UPDATE conversations SET auto_reply = 0 WHERE id = ?', [conv.id]);
         if (io) io.emit('auto_reply_changed', { conversationId: conv.id, auto_reply: false });
         const result = await db.run(

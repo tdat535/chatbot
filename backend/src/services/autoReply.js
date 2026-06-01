@@ -6,6 +6,30 @@ const { sendZaloMessage } = require('./zalo');
 // Track trạng thái thu thập thông tin: customerId -> 'waiting_name' | 'waiting_phone'
 const collectionState = new Map();
 
+// Timer re-enable bot sau khi agent không reply trong 1 phút
+const reEnableTimers = new Map();
+const RE_ENABLE_DELAY_MS = 60 * 1000;
+
+function scheduleReEnable(conversationId, io) {
+  if (reEnableTimers.has(conversationId)) {
+    clearTimeout(reEnableTimers.get(conversationId));
+  }
+  const timer = setTimeout(async () => {
+    reEnableTimers.delete(conversationId);
+    await db.run('UPDATE conversations SET auto_reply = 1 WHERE id = ? AND auto_reply = 0', [conversationId]);
+    console.log(`[AutoReply] Re-enabled bot for conversation ${conversationId} after 1 min inactivity`);
+    if (io) io.emit('auto_reply_changed', { conversationId, auto_reply: true });
+  }, RE_ENABLE_DELAY_MS);
+  reEnableTimers.set(conversationId, timer);
+}
+
+function cancelReEnable(conversationId) {
+  if (reEnableTimers.has(conversationId)) {
+    clearTimeout(reEnableTimers.get(conversationId));
+    reEnableTimers.delete(conversationId);
+  }
+}
+
 async function sendBotReply(channel, channelUserId, conversationId, text, io) {
   if (channel === 'facebook') await sendFacebookMessage(channelUserId, text);
   else if (channel === 'zalo') await sendZaloMessage(channelUserId, text);
@@ -75,6 +99,11 @@ async function handleIncomingMessage({ channel, channelUserId, senderName, messa
   // 4. Thu thập tên + SĐT
   const autoReplyGlobal = process.env.AUTO_REPLY_ENABLED !== 'false';
   const autoReplyConv = conversation.auto_reply !== 0;
+
+  // Nếu bot đang tắt (agent đã takeover), đặt timer 1 phút để tự bật lại
+  if (autoReplyGlobal && !autoReplyConv) {
+    scheduleReEnable(conversation.id, io);
+  }
 
   if (autoReplyGlobal && autoReplyConv) {
     const phoneRegex = /^(0|\+84)[0-9]{8,9}$/;
@@ -178,4 +207,4 @@ async function getConversationWithCustomer(convId) {
   `, [convId]);
 }
 
-module.exports = { handleIncomingMessage, getConversationWithCustomer };
+module.exports = { handleIncomingMessage, getConversationWithCustomer, cancelReEnable };
