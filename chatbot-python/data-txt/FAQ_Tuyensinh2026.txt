@@ -220,8 +220,8 @@ Group zalo ngành; môn văn hoá tại hệ thống VnEdu và Group zalo lớp 
 
 [Câu 38: Có liên kết đại học tốp trên không?]
 38. Có liên kết đại học tốp trên không? 
-→ Có liên kết với nhiều trường đại học uy tín: ĐH Kinh tế TPHCM (UEH); ĐH Công 
-nghệ Kỹ thuật (SPKT TPHCM); ĐH GTVT TPHCM; ĐH Mở; ĐH Trà Vinh; ĐH Quốc tế 
+→ Có liên kết với nhiều trường đại học uy tín: ĐH Kinh tế TPHCM (UEH); ĐH Công
+nghệ Kỹ thuật (CNKT TPHCM); ĐH GTVT TPHCM; ĐH Mở; ĐH Trà Vinh; ĐH Quốc tế
 Hồng Bàng
 
 [Câu 39: Nếu không muốn học đại học thì sao?]
@@ -320,8 +320,8 @@ GD&ĐT (mã trường CDV).
 
 [Câu 60: Có thể liên thông lên đại học nào?]
 60. Có thể liên thông lên đại học nào? 
-→ Các trường đại học đối tác liên kết: ĐH Kinh tế TPHCM (UEH); ĐH Công nghệ Kỹ 
-thuật (SPKT TPHCM); ĐH GTVT TPHCM; ĐH Mở; ĐH Trà Vinh; ĐH Quốc tế Hồng 
+→ Các trường đại học đối tác liên kết: ĐH Kinh tế TPHCM (UEH); ĐH Công nghệ Kỹ
+thuật (CNKT TPHCM); ĐH GTVT TPHCM; ĐH Mở; ĐH Trà Vinh; ĐH Quốc tế Hồng
 Bàng
 
 [Câu 61: Bằng có giá trị toàn quốc không?]
@@ -389,8 +389,8 @@ Bàng
 
 [Câu 76: Liên kết đại học tốp trên là gì?]
 76. Liên kết đại học tốp trên là gì? 
-→ Học cao đẳng tại trường, sau đó học liên thông đại học đối tác: ĐH Kinh tế TPHCM 
-(UEH); ĐH Công nghệ Kỹ thuật (SPKT TPHCM); ĐH GTVT TPHCM; ĐH Mở; ĐH Trà 
+→ Học cao đẳng tại trường, sau đó học liên thông đại học đối tác: ĐH Kinh tế TPHCM
+(UEH); ĐH Công nghệ Kỹ thuật (CNKT TPHCM); ĐH GTVT TPHCM; ĐH Mở; ĐH Trà
 Vinh; ĐH Quốc tế Hồng Bàng
 
 [Câu 77: Sau bao lâu có bằng đại học?]
@@ -426,7 +426,7 @@ Kế toán, Tài chính Ngân hàng, Logistics, QT văn phòng); khối ngành D
 
 9 
  
-+ Đại học Công nghệ kỹ thuật TPHCM (SPKT TPHCM): khối Công nghệ kỹ thuật 
++ Đại học Công nghệ kỹ thuật TPHCM (CNKT TPHCM): khối Công nghệ kỹ thuật 
 (Ô tô, Cơ khí, Điện – Điện tử - Điện lạnh, Xây dựng); khối Công nghệ thông tin 
 (Công nghệ thông tin, Truyền thông và mạng máy tính, Thiết kế nội thất) 
 + Đại học Mở: khối ngành Kinh tế (Quản trị kinh doanh, Marketing, Kế toán, Tài 
@@ -838,7 +838,7 @@ Học phí mỗi HK chia đóng 2-3 lần, đợt 1 HK1 tối thiểu 5 triệu.
 Học phí liên thông Đại học tại CĐ Viễn Đông (trọn khóa 1-1.5 năm):
 - ĐH Kinh tế TPHCM (UEH): 44.500.000đ/trọn khóa
 - ĐH Mở TPHCM: 42.000.000đ/trọn khóa
-- ĐH SPKT TPHCM: 57.500.000đ/trọn khóa
+- ĐH CNKT TPHCM: 57.500.000đ/trọn khóa
 - ĐH QT Hồng Bàng: 67.500.000đ/trọn khóa
 - ĐH Trà Vinh: 40.000.000đ/trọn khóa
 Liên hệ 0922334400 (Cô Thơ) hoặc 0977334400 (Cô Thu) để biết chính xác theo ngành.
@@ -855,7 +855,7 @@ KHỐI KINH TẾ (liên kết ĐH Kinh tế TP.HCM - UEH, ĐH Giao thông Vận 
 - Tài chính - Ngân hàng
 - Logistics
 
-KHỐI KỸ THUẬT (liên kết ĐH Giao thông Vận tải TP.HCM, ĐH Công nghệ Kỹ thuật TP.HCM - SPKT):
+KHỐI KỸ THUẬT (liên kết ĐH Giao thông Vận tải TP.HCM, ĐH Công nghệ Kỹ thuật TP.HCM - CNKT):
 - Ô tô
 - Điện
 - Xây dựng

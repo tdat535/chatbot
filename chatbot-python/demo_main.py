@@ -83,6 +83,8 @@ KEYWORD_BOOST_GROUPS = [
      ["học phí", "PA1", "PA2", "phương án", "HK", "đồng/HK", "cấp bù"]),
     (["ngành", "nganh", "xét tuyển", "xet tuyen", "tuyển sinh", "tuyen sinh", "đăng ký", "dang ky"],
      ["ngành", "tuyển sinh", "xét tuyển"]),
+    (["bằng cấp 3", "bang cap 3", "bằng thpt", "bang thpt", "môn thpt", "mon thpt", "môn văn hoá", "mon van hoa", "7 môn", "9 môn", "môn học thpt", "thi tốt nghiệp thpt"],
+     ["Toán", "Ngữ văn", "Vật lý", "Hoá học", "bằng cấp 3", "THPT", "văn hoá THPT", "GDKT"]),
 ]
 
 def search_documents(question: str, top_k: int = 12):

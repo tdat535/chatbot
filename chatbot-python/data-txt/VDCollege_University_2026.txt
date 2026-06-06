@@ -16,8 +16,7 @@ Trường Cao đẳng Viễn Đông là Top 1/10 trường chất lượng cao t
 [Đối tác chiến lược Đại học hàng đầu của Viễn Đông]
 Trường Cao đẳng Viễn Đông là trường Cao đẳng ngoài công lập duy nhất được các Đại học Top trên chọn làm điểm đào tạo.
 Các đối tác Đại học liên kết:
-- ĐH Sư phạm Kỹ thuật TP.HCM (SPKT)
-- ĐH Công nghệ Kỹ thuật TP.HCM
+- ĐH Công nghệ Kỹ thuật TP.HCM (CNKT)
 - ĐH Giao thông Vận tải TP.HCM
 - ĐH Kinh tế TP.HCM (UEH)
 - ĐH Mở
@@ -48,8 +47,8 @@ Liên kết với Đại học Mở:
 - Thương mại điện tử
 - Tiếng Anh thương mại
 
-[Khối Công nghệ và Kỹ thuật - Liên kết SPKT và Giao thông Vận tải]
-Liên kết với ĐH Công nghệ Kỹ thuật TP.HCM (SPKT) và ĐH Giao thông Vận tải TP.HCM:
+[Khối Công nghệ và Kỹ thuật - Liên kết CNKT và Giao thông Vận tải]
+Liên kết với ĐH Công nghệ Kỹ thuật TP.HCM (CNKT) và ĐH Giao thông Vận tải TP.HCM:
 Công nghệ kỹ thuật:
 - Ô tô
 - Cơ khí
