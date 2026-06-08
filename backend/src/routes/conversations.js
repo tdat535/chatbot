@@ -1,9 +1,21 @@
 const express = require('express');
 const router = express.Router();
+const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
 const db = require('../db');
-const { sendFacebookMessage } = require('../services/facebook');
+const { sendFacebookMessage, sendFacebookImage } = require('../services/facebook');
 const { sendZaloMessage } = require('../services/zalo');
 const requireAuth = require('../middleware/auth');
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) cb(null, true);
+    else cb(new Error('Chỉ hỗ trợ file ảnh'));
+  },
+});
 
 router.use(requireAuth);
 
@@ -192,6 +204,57 @@ router.post('/:id/notes', async (req, res) => {
     req.app.get('io').emit('new_message', { conversation: { id: conv.id }, message: msg });
     res.status(201).json(msg);
   } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// POST /api/conversations/:id/images
+router.post('/:id/images', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'Không có file ảnh' });
+
+    const conv = await db.get('SELECT * FROM conversations WHERE id = ?', [req.params.id]);
+    if (!conv) return res.status(404).json({ error: 'Not found' });
+    const customer = await db.get('SELECT * FROM customers WHERE id = ?', [conv.customer_id]);
+
+    const ext = req.file.originalname.split('.').pop().toLowerCase() || 'jpg';
+    const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const uploadsDir = path.join(__dirname, '..', '..', 'uploads');
+    fs.writeFileSync(path.join(uploadsDir, filename), req.file.buffer);
+    const imageUrl = `/uploads/${filename}`;
+
+    let sent = false;
+    if (conv.channel === 'facebook') {
+      sent = await sendFacebookImage(customer.channel_user_id, req.file.buffer, req.file.mimetype, req.file.originalname);
+    } else if (conv.channel === 'website') {
+      const fullImageUrl = `${req.protocol}://${req.get('host')}${imageUrl}`;
+      req.app.get('io').emit('website_reply', { sessionId: customer.channel_user_id, imageUrl: fullImageUrl });
+      sent = true;
+    }
+
+    const senderName = req.body.sender_name || 'Cán bộ tư vấn';
+    const result = await db.run(
+      "INSERT INTO messages (conversation_id, content, type, direction, sent_by, sender_name) VALUES (?, ?, 'image', 'out', 'agent', ?)",
+      [conv.id, imageUrl, senderName]
+    );
+    const msg = await db.get('SELECT * FROM messages WHERE id = ?', [result.insertId]);
+
+    await db.run(
+      "UPDATE conversations SET last_message='[Hình ảnh]', last_message_at=NOW(), updated_at=NOW() WHERE id=?",
+      [conv.id]
+    );
+
+    const updatedConv = await db.get(`
+      SELECT c.*, cu.name AS customer_name, cu.channel_user_id, cu.avatar_url, cu.tags,
+             u.display_name AS assigned_name
+      FROM conversations c JOIN customers cu ON c.customer_id = cu.id
+      LEFT JOIN users u ON c.assigned_to = u.id
+      WHERE c.id = ?
+    `, [conv.id]);
+    req.app.get('io').emit('new_message', { conversation: updatedConv, message: msg });
+
+    res.json({ message: msg, sent });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // PUT /api/conversations/:id

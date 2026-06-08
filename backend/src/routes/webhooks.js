@@ -287,12 +287,23 @@ router.get('/website-widget.js', (req, res) => {
       return new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
     }
 
-    function addMessage(text, direction) {
+    function addMessage(content, direction, isImage) {
       const wrap = document.createElement('div');
       wrap.className = 'crm-msg-wrap crm-msg-wrap-' + direction;
       const msg = document.createElement('div');
-      msg.className = 'crm-msg crm-msg-' + direction;
-      msg.textContent = text;
+      if (isImage) {
+        msg.className = 'crm-msg crm-msg-' + direction;
+        msg.style.cssText = 'padding:4px;background:transparent;border:none;box-shadow:none;';
+        const img = document.createElement('img');
+        img.src = content;
+        img.alt = 'Hình ảnh';
+        img.style.cssText = 'max-width:220px;max-height:240px;border-radius:10px;display:block;cursor:pointer;';
+        img.onclick = function() { window.open(content, '_blank'); };
+        msg.appendChild(img);
+      } else {
+        msg.className = 'crm-msg crm-msg-' + direction;
+        msg.textContent = content;
+      }
       const time = document.createElement('div');
       time.className = 'crm-msg-time';
       time.textContent = formatTime();
@@ -305,7 +316,8 @@ router.get('/website-widget.js', (req, res) => {
     socket.on('connect', () => socket.emit('website_join', { sessionId }));
     socket.on('website_reply', (data) => {
       if (data.sessionId === sessionId) {
-        addMessage(data.message, 'in');
+        if (data.imageUrl) addMessage(data.imageUrl, 'in', true);
+        else addMessage(data.message, 'in', false);
         if (!box.classList.contains('open')) box.classList.add('open');
       }
     });

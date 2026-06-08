@@ -16,6 +16,12 @@ export const getConversations = (params) => api.get('/conversations', { params }
 export const getConversation = (id) => api.get(`/conversations/${id}`);
 export const getMessages = (id) => api.get(`/conversations/${id}/messages`);
 export const sendMessage = (id, content, senderName) => api.post(`/conversations/${id}/messages`, { content, sender_name: senderName });
+export const sendImage = (id, file, senderName) => {
+  const form = new FormData();
+  form.append('image', file);
+  if (senderName) form.append('sender_name', senderName);
+  return api.post(`/conversations/${id}/images`, form);
+};
 export const sendNote = (id, content, senderName) => api.post(`/conversations/${id}/notes`, { content, sender_name: senderName });
 export const updateConversation = (id, data) => api.put(`/conversations/${id}`, data);
 export const getStats = () => api.get('/conversations/stats');

@@ -7,6 +7,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': 'http://localhost:3001',
+      '/uploads': 'http://localhost:3001',
       '/chatbot': 'http://localhost:8000',
       '/socket.io': { target: 'http://localhost:3001', ws: true },
     },

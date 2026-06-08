@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
 import * as XLSX from 'xlsx';
-import { getMessages, sendMessage, updateConversation, sendNote, getTemplates, getUsers } from '../api.js';
+import { getMessages, sendMessage, sendImage, updateConversation, sendNote, getTemplates, getUsers } from '../api.js';
 import ChannelBadge from './ChannelBadge.jsx';
 import socket from '../socket.js';
 import { MessageSkeleton } from './Skeleton.jsx';
@@ -47,6 +47,8 @@ export default function ChatView({ conversation, onUpdate, currentUser }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const imageInputRef = useRef(null);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [autoReply, setAutoReply] = useState(true);
   const [inputMode, setInputMode] = useState('reply');
@@ -136,6 +138,20 @@ export default function ChatView({ conversation, onUpdate, currentUser }) {
       if (!overrideContent) setInput('');
     } catch (e) { console.error(e); }
     setSending(false);
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    setUploadingImage(true);
+    try {
+      await sendImage(conversation.id, file, currentUser?.display_name);
+    } catch (err) {
+      console.error(err);
+      alert('Gửi ảnh thất bại: ' + (err.response?.data?.error || err.message));
+    }
+    setUploadingImage(false);
   };
 
   const applyTemplate = (tpl) => {
@@ -477,16 +493,20 @@ export default function ChatView({ conversation, onUpdate, currentUser }) {
               )}
               <div style={{ maxWidth: '68%' }}>
                 <div style={{
-                  background: isOut ? (isBot ? '#2563eb' : '#1e40af') : 'white',
+                  background: item.type === 'image' ? 'transparent' : (isOut ? (isBot ? '#2563eb' : '#1e40af') : 'white'),
                   color: isOut ? 'white' : '#1e293b',
                   borderRadius: 12,
                   borderBottomRightRadius: isOut ? 4 : 12,
                   borderBottomLeftRadius: isOut ? 12 : 4,
-                  padding: '8px 12px', fontSize: 16, lineHeight: 1.5,
-                  boxShadow: '0 1px 2px rgba(0,0,0,.08)',
-                  border: isOut ? 'none' : '1px solid #e2e8f0',
+                  padding: item.type === 'image' ? 0 : '8px 12px', fontSize: 16, lineHeight: 1.5,
+                  boxShadow: item.type === 'image' ? 'none' : '0 1px 2px rgba(0,0,0,.08)',
+                  border: item.type === 'image' ? 'none' : (isOut ? 'none' : '1px solid #e2e8f0'),
+                  overflow: 'hidden',
                 }}>
-                  {highlight(item.content)}
+                  {item.type === 'image'
+                    ? <img src={item.content} alt="Hình ảnh" style={{ display: 'block', maxWidth: 260, maxHeight: 320, borderRadius: 10, cursor: 'pointer' }} onClick={() => window.open(item.content, '_blank')} />
+                    : highlight(item.content)
+                  }
                 </div>
                 <div style={{
                   fontSize: 12, color: '#94a3b8', marginTop: 2,
@@ -564,6 +584,27 @@ export default function ChatView({ conversation, onUpdate, currentUser }) {
         </div>
 
         <div style={{ display: 'flex', gap: 8 }}>
+          {inputMode === 'reply' && (
+            <>
+              <input
+                ref={imageInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleImageUpload}
+              />
+              <button
+                onClick={() => imageInputRef.current?.click()}
+                disabled={uploadingImage}
+                title="Gửi hình ảnh"
+                style={{
+                  padding: '0 12px', borderRadius: 8, border: '1px solid #e2e8f0',
+                  background: 'white', color: '#64748b', fontSize: 18, cursor: 'pointer',
+                  opacity: uploadingImage ? 0.5 : 1, flexShrink: 0,
+                }}
+              >{uploadingImage ? '⏳' : '🧷'}</button>
+            </>
+          )}
           <textarea
             value={input}
             onChange={e => setInput(e.target.value)}

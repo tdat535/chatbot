@@ -40,6 +40,8 @@ services:
       FB_APP_SECRET: ${FB_APP_SECRET:-}
       ZALO_OA_ACCESS_TOKEN: ${ZALO_OA_ACCESS_TOKEN:-}
       AUTO_REPLY_ENABLED: ${AUTO_REPLY_ENABLED:-true}
+    volumes:
+      - uploads_data:/app/uploads
     depends_on:
       db:
         condition: service_healthy
@@ -59,3 +61,4 @@ volumes:
   db_data:
   chatbot_storage:
   chatbot_data:
+  uploads_data:
