@@ -113,7 +113,15 @@ io.on('connection', (socket) => {
 const PORT = process.env.PORT || 3001;
 
 // Khởi động: init DB schema trước rồi mới listen
-initSchema().then(() => {
+initSchema().then(async () => {
+  // Reset các conversation bị stuck auto_reply=0 từ lần chạy trước (timer mất khi restart)
+  const db = require('./db');
+  const { count } = await db.get('SELECT COUNT(*) as count FROM conversations WHERE auto_reply = 0');
+  if (count > 0) {
+    await db.run('UPDATE conversations SET auto_reply = 1 WHERE auto_reply = 0');
+    console.log(`[AutoReply] Reset ${count} conversation(s) auto_reply → ON (server restart)`);
+  }
+
   server.listen(PORT, () => {
     console.log(`\n🚀 CRM Mini Backend: http://localhost:${PORT}`);
     console.log(`🗄️  MySQL: ${process.env.DB_HOST}:${process.env.DB_PORT} / ${process.env.DB_NAME}`);

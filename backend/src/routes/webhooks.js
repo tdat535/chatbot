@@ -49,9 +49,12 @@ router.post('/facebook', async (req, res) => {
       // Echo: page tự reply trực tiếp trên Facebook
       // Bỏ qua echo do chính app gửi (bot reply) để tránh duplicate
       // app_id == FB_APP_ID → bot reply; app_id khác (e.g. 263902037430900) → admin reply thủ công
-      if (event.message.is_echo && String(event.message.app_id) === String(process.env.FB_APP_ID)) continue;
+      // Nếu FB_APP_ID chưa cấu hình → bỏ qua toàn bộ echo để tránh tắt bot nhầm
+      const fbAppId = process.env.FB_APP_ID;
+      const fbAppIdConfigured = fbAppId && fbAppId !== 'your_app_id_here';
+      if (event.message.is_echo && (!fbAppIdConfigured || String(event.message.app_id) === fbAppId)) continue;
 
-      if (event.message.is_echo) {
+      if (event.message.is_echo && fbAppIdConfigured) {
         const recipientId = event.recipient.id;
         const conv = await db.get(
           "SELECT c.id FROM conversations c JOIN customers cu ON c.customer_id = cu.id WHERE cu.channel = 'facebook' AND cu.channel_user_id = ?",
