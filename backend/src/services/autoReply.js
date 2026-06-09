@@ -8,17 +8,36 @@ const collectionState = new Map();
 
 // Timer re-enable bot sau khi agent không reply trong 1 phút
 const reEnableTimers = new Map();
+const pendingMessages = new Map(); // conversationId -> { channel, channelUserId, contextualQuestion }
 const RE_ENABLE_DELAY_MS = 60 * 1000;
 
-function scheduleReEnable(conversationId, io) {
+function scheduleReEnable(conversationId, io, pendingData) {
   if (reEnableTimers.has(conversationId)) {
     clearTimeout(reEnableTimers.get(conversationId));
+  }
+  if (pendingData) {
+    pendingMessages.set(conversationId, pendingData);
   }
   const timer = setTimeout(async () => {
     reEnableTimers.delete(conversationId);
     await db.run('UPDATE conversations SET auto_reply = 1 WHERE id = ? AND auto_reply = 0', [conversationId]);
     console.log(`[AutoReply] Re-enabled bot for conversation ${conversationId} after 1 min inactivity`);
     if (io) io.emit('auto_reply_changed', { conversationId, auto_reply: true });
+
+    // Trả lời luôn tin nhắn đang chờ
+    const pending = pendingMessages.get(conversationId);
+    pendingMessages.delete(conversationId);
+    if (pending) {
+      try {
+        let answer = await askChatbot(pending.contextualQuestion);
+        if (answer) {
+          try { const p = JSON.parse(answer); if (p?.text) answer = p.text; } catch {}
+          await sendBotReply(pending.channel, pending.channelUserId, conversationId, answer, io);
+        }
+      } catch (e) {
+        console.error('[AutoReply] Error replying to pending message:', e);
+      }
+    }
   }, RE_ENABLE_DELAY_MS);
   reEnableTimers.set(conversationId, timer);
 }
@@ -28,6 +47,7 @@ function cancelReEnable(conversationId) {
     clearTimeout(reEnableTimers.get(conversationId));
     reEnableTimers.delete(conversationId);
   }
+  pendingMessages.delete(conversationId);
 }
 
 async function sendBotReply(channel, channelUserId, conversationId, text, io) {
@@ -100,9 +120,19 @@ async function handleIncomingMessage({ channel, channelUserId, senderName, messa
   const autoReplyGlobal = process.env.AUTO_REPLY_ENABLED !== 'false';
   const autoReplyConv = conversation.auto_reply !== 0;
 
-  // Nếu bot đang tắt (agent đã takeover), đặt timer 1 phút để tự bật lại
+  // Build contextual question (dùng cho cả bot on và pending khi bot off)
+  const recentMsgs = await db.query(
+    "SELECT content, direction FROM messages WHERE conversation_id = ? AND type = 'text' ORDER BY id DESC LIMIT 4",
+    [conversation.id]
+  );
+  const contextLines = recentMsgs.reverse().slice(0, -1)
+    .map(m => m.direction === 'in' ? `Học sinh: ${m.content}` : `Bot: ${m.content}`)
+    .join('\n');
+  const contextualQuestion = contextLines ? `${contextLines}\nHọc sinh: ${message}` : message;
+
+  // Nếu bot đang tắt (agent đã takeover), đặt timer 1 phút rồi trả lời sau
   if (autoReplyGlobal && !autoReplyConv) {
-    scheduleReEnable(conversation.id, io);
+    scheduleReEnable(conversation.id, io, { channel, channelUserId, contextualQuestion });
   }
 
   if (autoReplyGlobal && autoReplyConv) {
@@ -145,17 +175,6 @@ async function handleIncomingMessage({ channel, channelUserId, senderName, messa
     }
 
     // 5. Auto-reply via AI chatbot
-    // Lấy 3 tin nhắn gần nhất để làm context cho câu hỏi ngắn/mơ hồ
-    const recentMsgs = await db.query(
-      "SELECT content, direction FROM messages WHERE conversation_id = ? AND type = 'text' ORDER BY id DESC LIMIT 4",
-      [conversation.id]
-    );
-    const contextLines = recentMsgs.reverse().slice(0, -1) // bỏ tin vừa lưu
-      .map(m => m.direction === 'in' ? `Học sinh: ${m.content}` : `Bot: ${m.content}`)
-      .join('\n');
-    const contextualQuestion = contextLines
-      ? `${contextLines}\nHọc sinh: ${message}`
-      : message;
 
     let answer = await askChatbot(contextualQuestion);
     if (answer) {
