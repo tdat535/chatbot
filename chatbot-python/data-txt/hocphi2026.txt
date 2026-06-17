@@ -11,15 +11,15 @@ Lưu ý chung: Học phí mỗi HK được chi làm 2 hoặc 3 lần đóng. Đ
 Học phí mỗi HK được chi làm 2 hoặc 3 lần đóng. Đợt 1 HK1 đóng tối thiểu 5 triệu.
 Có thể học tiếng Đức, tiếng Hàn thay cho tiếng Anh.
 
-Khối Kinh tế & Thiết kế - CNTT (Kế toán, Quản trị kinh doanh, Quản trị Marketing, Quan hệ công chúng, Quản trị văn phòng, Tài chính Ngân hàng, Logistics, Thiết kế đồ họa, Truyền thông đa phương tiện, Lập trình ứng dụng, Truyền thông & Mạng máy tính):
+Khối Kinh tế (Kế toán, Quản trị kinh doanh, Quản trị Marketing, Quan hệ công chúng, Quản trị văn phòng, Tài chính Ngân hàng, Logistics):
 - PA1: đóng 11.000.000 đồng/HK (học phí trọn khóa 6 HK: 68.000.000 đồng), không có cấp bù nhà nước
 - PA2: đóng 11.000.000 đồng/HK (học phí trọn khóa 6 HK: 68.000.000 đồng)
 
-Ngành Tiếng Anh (CD18):
+Khối Thiết kế - CNTT & Du lịch - Khách sạn (Thiết kế đồ họa, Truyền thông đa phương tiện, Lập trình ứng dụng, Truyền thông & Mạng máy tính, Tiếng Anh, QT Du lịch Lữ hành, QT Nhà hàng - Khách sạn):
 - PA1: đóng 12.000.000 đồng/HK (học phí trọn khóa 6 HK: 72.000.000 đồng), không có cấp bù nhà nước
 - PA2: đóng 12.000.000 đồng/HK (học phí trọn khóa 6 HK: 72.000.000 đồng)
 
-Khối Du lịch (QT Du lịch Lữ hành, QT Nhà hàng - Khách sạn, Hướng dẫn du lịch):
+Ngành Hướng dẫn du lịch:
 - PA1: đóng 13.000.000 đồng/HK (học phí trọn khóa 6 HK: 75.000.000 đồng), nhà nước hoàn lại 7.000.000 đồng/HK (tổng cấp bù 6 HK: 42.000.000 đồng)
 - PA2: chỉ đóng 7.000.000 đồng/HK (học phí trọn khóa 6 HK: 50.000.000 đồng)
 
@@ -64,11 +64,11 @@ Ngành Thiết kế đồ họa:
 - PA1: đóng 13.000.000 đồng/HK, nhà nước hoàn lại 8.000.000 đồng/HK
 - PA2: chỉ đóng 6.500.000 đồng/HK
 
-Nhóm Đồ họa - Truyền thông (Đồ họa đa phương tiện/Truyền thông & Mạng MT, Truyền thông đa phương tiện, Thương mại điện tử):
+Nhóm Đồ họa - Truyền thông (Đồ họa đa phương tiện/Truyền thông & Mạng MT, Truyền thông đa phương tiện):
 - PA1: đóng 14.000.000 đồng/HK, nhà nước hoàn lại 12.000.000 đồng/HK
 - PA2: chỉ đóng 7.000.000 đồng/HK
 
-Ngành Công nghệ thông tin, Lắp ráp cài đặt máy tính:
+Ngành Công nghệ thông tin, Lắp ráp cài đặt máy tính, Thương mại điện tử:
 - PA1: đóng 14.000.000 đồng/HK, nhà nước hoàn lại 12.000.000 đồng/HK
 - PA2: chỉ đóng 6.500.000 đồng/HK
 
@@ -156,3 +156,6 @@ Khối SƯ PHẠM (liên thông ĐH Trà Vinh):
 - Sư phạm mầm non
 - Giáo dục mầm non
 - Tiếng Anh sư phạm
+
+[HỌC PHÍ THEO TÍN CHỈ – GIÁ 1 TÍN CHỈ TẠI CĐ VIỄN ĐÔNG]
+Học phí dao động từ 470.000 đồng đến 670.000 đồng mỗi tín chỉ (15 tiết học), tùy theo chuyên ngành đào tạo.

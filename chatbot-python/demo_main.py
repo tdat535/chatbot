@@ -236,6 +236,12 @@ async def ask(request: Request, question: str):
     if not question.strip():
         return {"answer": "Bạn hỏi mình gì đó đi chứ 😄"}
 
+    # Greeting detection — trả lời thẳng, không cần FAISS
+    _last_line = question.strip().split('\n')[-1].strip().lower()
+    _greeting_keywords = ["xin chào", "chào", "hello", "hi ", "hi!", "hey", "alo", "alô", "ơi"]
+    if any(_last_line == kw or _last_line.startswith(kw) for kw in _greeting_keywords) and len(_last_line) < 30:
+        return {"answer": "Chào bạn 👋 Mình là trợ lý tư vấn tuyển sinh của Trường Cao đẳng Viễn Đông nha. Bạn cần tư vấn gì cứ hỏi mình nhé!"}
+
     if index is None or not documents:
         return {"answer": "Bot chưa được huấn luyện dữ liệu. Vui lòng upload tài liệu trong phần Huấn luyện Bot nhé!"}
 

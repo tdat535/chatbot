@@ -6,10 +6,10 @@ const { sendZaloMessage } = require('./zalo');
 // Track trạng thái thu thập thông tin: customerId -> 'waiting_name' | 'waiting_phone'
 const collectionState = new Map();
 
-// Timer re-enable bot sau khi agent không reply trong 1 phút
+// Timer re-enable bot sau khi agent không reply trong 3 phút
 const reEnableTimers = new Map();
 const pendingMessages = new Map(); // conversationId -> { channel, channelUserId, contextualQuestion }
-const RE_ENABLE_DELAY_MS = 60 * 1000;
+const RE_ENABLE_DELAY_MS = 3 * 60 * 1000;
 
 function scheduleReEnable(conversationId, io, pendingData) {
   if (reEnableTimers.has(conversationId)) {
