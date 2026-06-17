@@ -242,6 +242,17 @@ async def ask(request: Request, question: str):
     if any(_last_line == kw or _last_line.startswith(kw) for kw in _greeting_keywords) and len(_last_line) < 30:
         return {"answer": "Chào bạn 👋 Mình là trợ lý tư vấn tuyển sinh của Trường Cao đẳng Viễn Đông nha. Bạn cần tư vấn gì cứ hỏi mình nhé!"}
 
+    # Cán bộ tư vấn bypass — hardcode để tránh LLM hallucinate tên
+    _q_lower = question.lower()
+    _cbtv_kws = ["cán bộ tư vấn", "tư vấn viên", "ai tư vấn", "người tư vấn", "nhân viên tư vấn", "cô thơ", "cô thu", "thầy nhanh", "thầy huy", "số tư vấn", "sdt tư vấn", "liên hệ tư vấn"]
+    if any(kw in _q_lower for kw in _cbtv_kws):
+        return {"answer": "Đội ngũ cán bộ tư vấn tuyển sinh của trường nha:\n- Cô Thơ: 0922334400\n- Cô Thu: 0977334400\n- Thầy Nhanh: 0978734400\n- Thầy Huy: 0966337755\n\nBạn nhắn Zalo hoặc gọi trực tiếp đều được nhé 😊"}
+
+    # Tín chỉ bypass — chunk ngắn FAISS không retrieve được
+    _tinchi_kws = ["tín chỉ", "tin chỉ", "1 tín", "một tín", "giá tín", "tiền tín", "bao nhiêu tín"]
+    if any(kw in _q_lower for kw in _tinchi_kws):
+        return {"answer": "Học phí tính theo tín chỉ tại Viễn Đông dao động từ 470.000đ đến 670.000đ mỗi tín chỉ (15 tiết học), tùy chuyên ngành nha!"}
+
     if index is None or not documents:
         return {"answer": "Bot chưa được huấn luyện dữ liệu. Vui lòng upload tài liệu trong phần Huấn luyện Bot nhé!"}
 
