@@ -242,15 +242,17 @@ async def ask(request: Request, question: str):
     if any(_last_line == kw or _last_line.startswith(kw) for kw in _greeting_keywords) and len(_last_line) < 30:
         return {"answer": "Chào bạn 👋 Mình là trợ lý tư vấn tuyển sinh của Trường Cao đẳng Viễn Đông nha. Bạn cần tư vấn gì cứ hỏi mình nhé!"}
 
+    # Lấy câu hỏi cuối của học sinh để check keyword (tránh match từ tin nhắn staff trong context)
+    _student_q = extract_last_question(question).lower()
+
     # Cán bộ tư vấn bypass — hardcode để tránh LLM hallucinate tên
-    _q_lower = question.lower()
     _cbtv_kws = ["cán bộ tư vấn", "tư vấn viên", "ai tư vấn", "người tư vấn", "nhân viên tư vấn", "cô thơ", "cô thu", "thầy nhanh", "thầy huy", "số tư vấn", "sdt tư vấn", "liên hệ tư vấn"]
-    if any(kw in _q_lower for kw in _cbtv_kws):
+    if any(kw in _student_q for kw in _cbtv_kws):
         return {"answer": "Đội ngũ cán bộ tư vấn tuyển sinh của trường nha:\n- Cô Thơ: 0922334400\n- Cô Thu: 0977334400\n- Thầy Nhanh: 0978734400\n- Thầy Huy: 0966337755\n\nBạn nhắn Zalo hoặc gọi trực tiếp đều được nhé 😊"}
 
     # Tín chỉ bypass — chunk ngắn FAISS không retrieve được
     _tinchi_kws = ["tín chỉ", "tin chỉ", "1 tín", "một tín", "giá tín", "tiền tín", "bao nhiêu tín"]
-    if any(kw in _q_lower for kw in _tinchi_kws):
+    if any(kw in _student_q for kw in _tinchi_kws):
         return {"answer": "Học phí tính theo tín chỉ tại Viễn Đông dao động từ 470.000đ đến 670.000đ mỗi tín chỉ (15 tiết học), tùy chuyên ngành nha!"}
 
     if index is None or not documents:
@@ -391,6 +393,7 @@ QUY TẮC BẮT BUỘC:
 - SỐ TIỀN HỌC PHÍ: PHẢI lấy đúng 100% từ [CONTEXT]. TUYỆT ĐỐI KHÔNG tự điền số tiền nếu không thấy trong context. Nếu context không có số tiền cụ thể → nói "liên hệ Cô Thơ 0922334400 hoặc Cô Thu 0977334400 để biết mức học phí chính xác".
 - KHÔNG hỏi ngược lại "Bạn muốn tôi hỗ trợ thêm như thế nào?" hay "Bạn có muốn... không?" — trả lời xong là kết thúc, không kéo dài
 - KHÔNG trả lời về chủ đề không liên quan đến nhà trường
+- KHI người dùng hỏi về đăng ký xét tuyển, cách đăng ký, nộp hồ sơ: LUÔN gửi kèm link đăng ký https://tuyensinh.viendong.edu.vn/xettuyen/
 
 VÍ DỤ ĐÚNG về học phí (bắt buộc làm theo format này):
 Hỏi: "Học phí ngành Kế toán?"
