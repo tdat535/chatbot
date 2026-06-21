@@ -36,6 +36,8 @@ services:
       DB_NAME: crm_mini
       CHATBOT_URL: http://chatbot:8000
       FB_PAGE_ACCESS_TOKEN: ${FB_PAGE_ACCESS_TOKEN:-}
+      FB_PAGE_ACCESS_TOKEN_2: ${FB_PAGE_ACCESS_TOKEN_2:-}
+      FB_PAGE_ID_2: ${FB_PAGE_ID_2:-}
       FB_VERIFY_TOKEN: ${FB_VERIFY_TOKEN:-crm_mini_verify_123}
       FB_APP_SECRET: ${FB_APP_SECRET:-}
       FB_APP_ID: ${FB_APP_ID:-}

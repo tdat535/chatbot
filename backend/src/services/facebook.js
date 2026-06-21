@@ -1,11 +1,23 @@
 const axios = require('axios');
 const FormData = require('form-data');
 
-const PAGE_ACCESS_TOKEN = process.env.FB_PAGE_ACCESS_TOKEN;
 const GRAPH_API = 'https://graph.facebook.com/v22.0/me/messages';
 
-async function sendFacebookImage(recipientId, buffer, mimetype, filename) {
-  if (!PAGE_ACCESS_TOKEN || PAGE_ACCESS_TOKEN === 'your_page_access_token_here') {
+function getPageAccessToken(pageId) {
+  const token2 = process.env.FB_PAGE_ACCESS_TOKEN_2;
+  if (pageId && String(pageId) === String(process.env.FB_PAGE_ID_2) && token2 && token2 !== 'your_page_access_token_2_here') {
+    return token2;
+  }
+  const token1 = process.env.FB_PAGE_ACCESS_TOKEN;
+  if (!token1 || token1 === 'your_page_access_token_here') {
+    return null;
+  }
+  return token1;
+}
+
+async function sendFacebookImage(recipientId, buffer, mimetype, filename, pageId) {
+  const token = getPageAccessToken(pageId);
+  if (!token) {
     console.log('[Facebook] Token chưa cấu hình, bỏ qua gửi ảnh.');
     return false;
   }
@@ -17,7 +29,7 @@ async function sendFacebookImage(recipientId, buffer, mimetype, filename) {
     }));
     form.append('filedata', buffer, { filename, contentType: mimetype });
     await axios.post(GRAPH_API, form, {
-      params: { access_token: PAGE_ACCESS_TOKEN },
+      params: { access_token: token },
       headers: form.getHeaders(),
     });
     return true;
@@ -27,8 +39,9 @@ async function sendFacebookImage(recipientId, buffer, mimetype, filename) {
   }
 }
 
-async function sendFacebookMessage(recipientId, text) {
-  if (!PAGE_ACCESS_TOKEN || PAGE_ACCESS_TOKEN === 'your_page_access_token_here') {
+async function sendFacebookMessage(recipientId, text, pageId) {
+  const token = getPageAccessToken(pageId);
+  if (!token) {
     console.log('[Facebook] Token chưa cấu hình, bỏ qua gửi tin.');
     return false;
   }
@@ -40,7 +53,7 @@ async function sendFacebookMessage(recipientId, text) {
         message: { text },
         messaging_type: 'RESPONSE',
       },
-      { params: { access_token: PAGE_ACCESS_TOKEN } }
+      { params: { access_token: token } }
     );
     return true;
   } catch (err) {
@@ -49,15 +62,16 @@ async function sendFacebookMessage(recipientId, text) {
   }
 }
 
-async function getUserProfile(userId) {
-  if (!PAGE_ACCESS_TOKEN || PAGE_ACCESS_TOKEN === 'your_page_access_token_here') {
+async function getUserProfile(userId, pageId) {
+  const token = getPageAccessToken(pageId);
+  if (!token) {
     return null;
   }
   try {
     const res = await axios.get(`https://graph.facebook.com/v22.0/${userId}`, {
       params: {
         fields: 'name,profile_pic',
-        access_token: PAGE_ACCESS_TOKEN,
+        access_token: token,
       },
     });
     return res.data;

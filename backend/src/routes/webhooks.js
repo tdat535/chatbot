@@ -82,14 +82,14 @@ router.post('/facebook', async (req, res) => {
       // Try to get user's name from FB
       let senderName = `FB_${senderId.slice(-6)}`;
       let avatarUrl = null;
-      const profile = await getUserProfile(senderId);
+      const profile = await getUserProfile(senderId, entry.id);
       if (profile) {
         senderName = profile.name || senderName;
         avatarUrl = profile.profile_pic || null;
       }
 
       await handleIncomingMessage(
-        { channel: 'facebook', channelUserId: senderId, senderName, message: text, avatarUrl },
+        { channel: 'facebook', channelUserId: senderId, senderName, message: text, avatarUrl, pageId: entry.id },
         io
       );
     }

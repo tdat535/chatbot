@@ -32,7 +32,7 @@ function scheduleReEnable(conversationId, io, pendingData) {
         let answer = await askChatbot(pending.contextualQuestion);
         if (answer) {
           try { const p = JSON.parse(answer); if (p?.text) answer = p.text; } catch {}
-          await sendBotReply(pending.channel, pending.channelUserId, conversationId, answer, io);
+          await sendBotReply(pending.channel, pending.channelUserId, conversationId, answer, io, pending.pageId);
         }
       } catch (e) {
         console.error('[AutoReply] Error replying to pending message:', e);
@@ -50,8 +50,8 @@ function cancelReEnable(conversationId) {
   pendingMessages.delete(conversationId);
 }
 
-async function sendBotReply(channel, channelUserId, conversationId, text, io) {
-  if (channel === 'facebook') await sendFacebookMessage(channelUserId, text);
+async function sendBotReply(channel, channelUserId, conversationId, text, io, pageId) {
+  if (channel === 'facebook') await sendFacebookMessage(channelUserId, text, pageId);
   else if (channel === 'zalo') await sendZaloMessage(channelUserId, text);
 
   const result = await db.run(
@@ -68,7 +68,7 @@ async function sendBotReply(channel, channelUserId, conversationId, text, io) {
   return { conv, msg };
 }
 
-async function handleIncomingMessage({ channel, channelUserId, senderName, message, avatarUrl }, io) {
+async function handleIncomingMessage({ channel, channelUserId, senderName, message, avatarUrl, pageId }, io) {
   // 1. Upsert customer
   await db.run(`
     INSERT INTO customers (name, channel, channel_user_id, avatar_url)
@@ -132,7 +132,7 @@ async function handleIncomingMessage({ channel, channelUserId, senderName, messa
 
   // Nếu bot đang tắt (agent đã takeover), đặt timer 1 phút rồi trả lời sau
   if (autoReplyGlobal && !autoReplyConv) {
-    scheduleReEnable(conversation.id, io, { channel, channelUserId, contextualQuestion });
+    scheduleReEnable(conversation.id, io, { channel, channelUserId, contextualQuestion, pageId });
   }
 
   if (autoReplyGlobal && autoReplyConv) {
@@ -145,7 +145,7 @@ async function handleIncomingMessage({ channel, channelUserId, senderName, messa
       if (!state) {
         collectionState.set(customerId, 'waiting_name');
         const { conv, msg } = await sendBotReply(channel, channelUserId, conversation.id,
-          'Xin chào! Mình là trợ lý tư vấn tuyển sinh Cao đẳng Viễn Đông 😊 Cho mình biết tên bạn với nhé?', io);
+          'Xin chào! Mình là trợ lý tư vấn tuyển sinh Cao đẳng Viễn Đông 😊 Cho mình biết tên bạn với nhé?', io, pageId);
         return { conversation: conv, incomingMsg, replyMsg: msg };
       }
       if (state === 'waiting_name') {
@@ -168,7 +168,7 @@ async function handleIncomingMessage({ channel, channelUserId, senderName, messa
         if (phoneRegex.test(message.trim())) {
           const displayName = customer.name && !customer.name.startsWith('FB_') ? customer.name : 'bạn';
           const { conv, msg } = await sendBotReply(channel, channelUserId, conversation.id,
-            `Cảm ơn ${displayName}! Mình đã lưu SĐT của bạn rồi 😊 Cứ hỏi thêm gì về tuyển sinh nhé!`, io);
+            `Cảm ơn ${displayName}! Mình đã lưu SĐT của bạn rồi 😊 Cứ hỏi thêm gì về tuyển sinh nhé!`, io, pageId);
           return { conversation: conv, incomingMsg, replyMsg: msg };
         }
       }
@@ -190,7 +190,7 @@ async function handleIncomingMessage({ channel, channelUserId, senderName, messa
         answer = `Cảm ơn bạn đã cho mình SĐT rồi nhé! 😊\n\n${answer}`;
       }
 
-      if (channel === 'facebook') await sendFacebookMessage(channelUserId, answer);
+      if (channel === 'facebook') await sendFacebookMessage(channelUserId, answer, pageId);
       else if (channel === 'zalo') await sendZaloMessage(channelUserId, answer);
 
       const outResult = await db.run(
