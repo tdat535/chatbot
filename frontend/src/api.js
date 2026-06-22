@@ -39,6 +39,7 @@ export const deleteTemplate = (id) => api.delete(`/templates/${id}`);
 
 // Dashboard
 export const getDashboardStats = () => api.get('/stats');
+export const exportStats = (params) => api.get('/stats/export', { params });
 
 // Broadcast
 export const broadcast = (data) => api.post('/broadcast', data);

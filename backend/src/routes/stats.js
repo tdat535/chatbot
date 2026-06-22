@@ -110,4 +110,61 @@ router.get('/', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// GET /api/stats/export?from=YYYY-MM-DD&to=YYYY-MM-DD - Chi tiết tin nhắn theo ngày
+function parseDate(dateStr) {
+  const d = new Date(dateStr);
+  d.setUTCHours(0, 0, 0, 0);
+  return d.toISOString().slice(0, 10);
+}
+
+router.get('/export', async (req, res) => {
+  try {
+    const { from, to } = req.query;
+    if (!from || !to) {
+      return res.status(400).json({ error: 'from and to are required' });
+    }
+
+    const fromDate = parseDate(from);
+    const toDate = parseDate(to);
+
+    // Lọc tương tự conversations
+    const { channel, status, search, assigned_to, label } = req.query;
+
+    // Lấy danh sách messages trong khoảng thời gian, kèm thông tin conversation + customer
+    // Chỉ lấy thông tin liên quan đến tin nhắn trong khoảng ngày chọn
+    let sql = `
+      SELECT m.id, m.conversation_id, m.content, m.type, m.direction, m.sent_by, m.sender_name, m.created_at,
+          c.status, c.channel, c.labels, c.auto_reply,
+          cu.name AS customer_name, cu.phone AS customer_phone, cu.email AS customer_email,
+          u.display_name AS assigned_name
+      FROM messages m
+      JOIN conversations c ON m.conversation_id = c.id
+      JOIN customers cu ON c.customer_id = cu.id
+      LEFT JOIN users u ON c.assigned_to = u.id
+      WHERE DATE(m.created_at) >= ? AND DATE(m.created_at) <= ?
+    `;
+    const params = [fromDate, toDate];
+
+    if (channel && channel !== 'all') { sql += ' AND c.channel = ?'; params.push(channel); }
+    if (status && status !== 'all') { sql += ' AND c.status = ?'; params.push(status); }
+    if (search) {
+      sql += ' AND (cu.name LIKE ? OR cu.phone LIKE ? OR m.content LIKE ?)';
+      params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+    }
+    if (assigned_to) { sql += ' AND c.assigned_to = ?'; params.push(assigned_to); }
+    if (label) { sql += ' AND JSON_CONTAINS(c.labels, ?)'; params.push(JSON.stringify(label)); }
+
+    sql += ' ORDER BY m.created_at ASC';
+
+    const messages = await db.query(sql, params);
+
+    res.json({
+      from: fromDate,
+      to: toDate,
+      count: messages.length,
+      data: messages,
+    });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 module.exports = router;

@@ -1,5 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { getDashboardStats } from '../api.js';
+import * as XLSX from 'xlsx';
+import { getDashboardStats, exportStats } from '../api.js';
 import { StatCardSkeleton } from '../components/Skeleton.jsx';
 
 function StatCard({ label, value, sub, color = '#2563eb', icon }) {
@@ -48,6 +49,11 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showExport, setShowExport] = useState(false);
+  const [exportFrom, setExportFrom] = useState('');
+  const [exportTo, setExportTo] = useState('');
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState(null);
 
   const load = async () => {
     setLoading(true);
@@ -62,6 +68,49 @@ export default function Dashboard() {
   };
 
   useEffect(() => { load(); }, []);
+
+  const handleExport = async () => {
+    if (!exportFrom || !exportTo) {
+      setExportError('Vui lòng chọn cả ngày bắt đầu và ngày kết thúc');
+      return;
+    }
+    if (new Date(exportFrom) > new Date(exportTo)) {
+      setExportError('Ngày bắt đầu không thể sau ngày kết thúc');
+      return;
+    }
+    setExporting(true);
+    setExportError(null);
+    try {
+      const res = await exportStats({ from: exportFrom, to: exportTo });
+      const rows = res.data.data.map(m => ({
+        'Ngày giờ': new Date(m.created_at).toLocaleString('vi-VN'),
+        'Kênh': m.channel,
+        'Học sinh': m.customer_name || '',
+        'SĐT': m.customer_phone || '',
+        'Email': m.customer_email || '',
+        'Chiều': m.direction === 'in' ? 'Học sinh gửi' : 'CBTV gửi',
+        'Người gửi': m.sent_by === 'bot' ? 'Chatbot' : (m.sender_name || ''),
+        'Loại': m.type === 'note' ? 'Ghi chú nội bộ' : (m.type === 'image' ? 'Hình ảnh' : 'Tin nhắn'),
+        'Nội dung': m.content || '',
+        'Trạng thái hội thoại': m.status === 'open' ? 'Mở' : 'Đã đóng',
+        'Phụ trách': m.assigned_name || '',
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(rows);
+      ws['!cols'] = [
+        { wch: 20 }, { wch: 12 }, { wch: 22 }, { wch: 14 },
+        { wch: 25 }, { wch: 15 }, { wch: 20 }, { wch: 16 },
+        { wch: 50 }, { wch: 16 }, { wch: 18 },
+      ];
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Chi tiết tin nhắn');
+      XLSX.writeFile(wb, `CRM_Mini_ChiTiet_${exportFrom}_${exportTo}.xlsx`);
+      setShowExport(false);
+    } catch (e) {
+      setExportError(e.response?.data?.error || 'Xuất file thất bại');
+    }
+    setExporting(false);
+  };
 
   if (loading) {
     return (
@@ -110,12 +159,21 @@ export default function Dashboard() {
               {new Date().toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </div>
           </div>
-          <button onClick={load} style={{
-            padding: '8px 16px', borderRadius: 8, border: '1px solid #e2e8f0',
-            background: 'white', color: '#64748b', fontSize: 15, cursor: 'pointer',
-          }}>
-            Làm mới
-          </button>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button onClick={load} style={{
+              padding: '8px 16px', borderRadius: 8, border: '1px solid #e2e8f0',
+              background: 'white', color: '#64748b', fontSize: 15, cursor: 'pointer',
+            }}>
+              Làm mới
+            </button>
+            <button onClick={() => { setShowExport(true); setExportError(null); }} style={{
+              padding: '8px 16px', borderRadius: 8, border: '1px solid #16a34a',
+              background: '#f0fdf4', color: '#15803d', fontSize: 15, cursor: 'pointer',
+              fontWeight: 600,
+            }}>
+              📥 Xuất Excel
+            </button>
+          </div>
         </div>
 
         {/* Stat Cards - hàng 1 */}
@@ -354,6 +412,58 @@ export default function Dashboard() {
         </div>
 
       </div>
+
+      {/* Export Modal */}
+      {showExport && (
+        <div onClick={() => setShowExport(false)} style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,.5)',
+          zIndex: 1000, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: 80,
+        }}>
+          <div onClick={e => e.stopPropagation()} style={{
+            background: 'white', borderRadius: 14, width: 440, maxWidth: '90vw',
+            boxShadow: '0 20px 60px rgba(0,0,0,.25)', overflow: 'hidden',
+          }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #f1f5f9' }}>
+              <div style={{ fontSize: 18, fontWeight: 700, color: '#1e293b' }}>Xuất Excel theo ngày</div>
+              <div style={{ fontSize: 14, color: '#94a3b8', marginTop: 2 }}>Chọn khoảng thời gian muốn xuất báo cáo</div>
+            </div>
+            <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: 14, fontWeight: 600, color: '#475569', marginBottom: 6 }}>Từ ngày</label>
+                  <input
+                    type="date"
+                    value={exportFrom}
+                    onChange={e => setExportFrom(e.target.value)}
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 15 }}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: 14, fontWeight: 600, color: '#475569', marginBottom: 6 }}>Đến ngày</label>
+                  <input
+                    type="date"
+                    value={exportTo}
+                    onChange={e => setExportTo(e.target.value)}
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 15 }}
+                  />
+                </div>
+              </div>
+              {exportError && <div style={{ color: '#ef4444', fontSize: 14 }}>{exportError}</div>}
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+                <button onClick={() => setShowExport(false)} style={{
+                  padding: '8px 16px', borderRadius: 8, border: '1px solid #e2e8f0',
+                  background: 'white', color: '#64748b', fontSize: 15, cursor: 'pointer',
+                }}>Hủy</button>
+                <button onClick={handleExport} disabled={exporting} style={{
+                  padding: '8px 16px', borderRadius: 8, border: 'none',
+                  background: '#16a34a', color: 'white', fontSize: 15, cursor: 'pointer',
+                  fontWeight: 600, opacity: exporting ? 0.6 : 1,
+                }}>{exporting ? 'Đang xuất...' : 'Xuất Excel'}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
