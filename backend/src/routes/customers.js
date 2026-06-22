@@ -6,7 +6,7 @@ router.use(requireAuth);
 
 router.get('/', async (req, res) => {
   try {
-    const { search, channel } = req.query;
+    const { search, channel, date_from, date_to } = req.query;
     let sql = 'SELECT * FROM customers WHERE 1=1';
     const params = [];
     if (channel && channel !== 'all') { sql += ' AND channel=?'; params.push(channel); }
@@ -14,6 +14,8 @@ router.get('/', async (req, res) => {
       sql += ' AND (name LIKE ? OR phone LIKE ? OR email LIKE ?)';
       params.push(`%${search}%`, `%${search}%`, `%${search}%`);
     }
+    if (date_from) { sql += ' AND created_at >= ?'; params.push(date_from + ' 00:00:00'); }
+    if (date_to) { sql += ' AND created_at <= ?'; params.push(date_to + ' 23:59:59'); }
     sql += ' ORDER BY created_at DESC LIMIT 200';
     res.json(await db.query(sql, params));
   } catch (e) { res.status(500).json({ error: e.message }); }

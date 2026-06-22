@@ -21,5 +21,16 @@
       "Bash(python -m pip install openpyxl -q)",
       "Bash(python parse_excel_nganh.py)"
     ]
+  },
+  "skillOverrides": {
+    "brandkit": "name-only",
+    "design-taste-frontend-v1": "name-only",
+    "gpt-taste": "name-only",
+    "high-end-visual-design": "name-only",
+    "image-to-code": "name-only",
+    "industrial-brutalist-ui": "name-only",
+    "minimalist-ui": "name-only",
+    "stitch-design-taste": "name-only",
+    "imagegen-frontend-mobile": "name-only"
   }
 }

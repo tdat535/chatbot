@@ -8,15 +8,22 @@ export default function Customers() {
   const [customers, setCustomers] = useState([]);
   const [search, setSearch] = useState('');
   const [channel, setChannel] = useState('all');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
-    getCustomers({ search, channel }).then(res => {
+    const params = { search, channel };
+    if (dateFrom) params.date_from = dateFrom;
+    if (dateTo) params.date_to = dateTo;
+    getCustomers(params).then(res => {
       setCustomers(res.data);
       setLoading(false);
     });
-  }, [search, channel]);
+  }, [search, channel, dateFrom, dateTo]);
+
+  const clearDateFilter = () => { setDateFrom(''); setDateTo(''); };
 
   const initial = (name) => (name || '?').charAt(0).toUpperCase();
   const colors = ['#2563eb', '#7c3aed', '#db2777', '#d97706', '#059669', '#0891b2'];
@@ -53,13 +60,13 @@ export default function Customers() {
         </div>
 
         {/* Filters */}
-        <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
+        <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
           <input
             placeholder="🔍 Tìm tên học sinh, SĐT, email..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             style={{
-              flex: 1, padding: '9px 14px', border: '1px solid #e2e8f0', borderRadius: 8,
+              flex: 1, minWidth: 200, padding: '9px 14px', border: '1px solid #e2e8f0', borderRadius: 8,
               fontSize: 15, outline: 'none', background: 'white',
             }}
           />
@@ -74,6 +81,25 @@ export default function Customers() {
               {ch === 'all' ? 'Tất cả' : ch === 'facebook' ? '📘 FB' : ch === 'zalo' ? '🔵 Zalo' : '🌐 Web'}
             </button>
           ))}
+          {/* Date filter */}
+          <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginLeft: 'auto' }}>
+            <span style={{ fontSize: 14, color: '#64748b', whiteSpace: 'nowrap' }}>📅 Từ</span>
+            <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} style={{
+              padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: 8,
+              fontSize: 14, outline: 'none', background: 'white', color: '#334155',
+            }} />
+            <span style={{ fontSize: 14, color: '#64748b' }}>→</span>
+            <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} style={{
+              padding: '8px 10px', border: '1px solid #e2e8f0', borderRadius: 8,
+              fontSize: 14, outline: 'none', background: 'white', color: '#334155',
+            }} />
+            {(dateFrom || dateTo) && (
+              <button onClick={clearDateFilter} title="Xoá filter ngày" style={{
+                padding: '8px 10px', border: '1px solid #fecaca', borderRadius: 8,
+                background: '#fef2f2', fontSize: 13, color: '#dc2626', cursor: 'pointer',
+              }}>✕</button>
+            )}
+          </div>
         </div>
 
         {/* Table */}
