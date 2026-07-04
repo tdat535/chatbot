@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import { getCustomers } from '../api.js';
 import ChannelBadge from '../components/ChannelBadge.jsx';
@@ -136,7 +136,14 @@ export default function Customers() {
                       <span style={{ fontSize: 16, fontWeight: 500 }}>{c.name}</span>
                     </div>
                   </td>
-                  <td style={{ padding: '12px 16px' }}><ChannelBadge channel={c.channel} /></td>
+                  <td style={{ padding: '12px 16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <ChannelBadge channel={c.channel} />
+                      {c.source === 'facebook_ads' && (
+                        <span style={{ fontSize: 11, background: '#fef3c7', color: '#d97706', padding: '2px 6px', borderRadius: 4, fontWeight: 600 }}>Từ Ads</span>
+                      )}
+                    </div>
+                  </td>
                   <td style={{ padding: '12px 16px', fontSize: 15, color: '#64748b' }}>{c.phone || '—'}</td>
                   <td style={{ padding: '12px 16px', fontSize: 15, color: '#64748b' }}>{c.email || '—'}</td>
                   <td style={{ padding: '12px 16px', fontSize: 15, color: '#64748b' }}>{fmtDate(c.created_at)}</td>

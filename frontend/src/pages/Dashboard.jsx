@@ -1,7 +1,8 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import { getDashboardStats, exportStats } from '../api.js';
 import { StatCardSkeleton } from '../components/Skeleton.jsx';
+import AdsPerformance from '../components/AdsPerformance.jsx';
 
 function StatCard({ label, value, sub, color = '#2563eb', icon }) {
   return (
@@ -54,6 +55,7 @@ export default function Dashboard() {
   const [exportTo, setExportTo] = useState('');
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState(null);
+  const [activeTab, setActiveTab] = useState('overview');
 
   const load = async () => {
     setLoading(true);
@@ -154,9 +156,30 @@ export default function Dashboard() {
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <div>
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1e293b', margin: 0 }}>Tổng quan</h1>
-            <div style={{ fontSize: 15, color: '#64748b', marginTop: 4 }}>
-              {new Date().toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1e293b', margin: 0 }}>Dashboard</h1>
+            <div style={{ display: 'flex', gap: 16, marginTop: 12 }}>
+              <button 
+                onClick={() => setActiveTab('overview')}
+                style={{ 
+                  background: 'none', border: 'none', fontSize: 16, cursor: 'pointer', 
+                  fontWeight: activeTab === 'overview' ? 700 : 500,
+                  color: activeTab === 'overview' ? '#2563eb' : '#64748b',
+                  borderBottom: activeTab === 'overview' ? '2px solid #2563eb' : '2px solid transparent',
+                  paddingBottom: 4
+                }}>
+                Tổng quan
+              </button>
+              <button 
+                onClick={() => setActiveTab('ads')}
+                style={{ 
+                  background: 'none', border: 'none', fontSize: 16, cursor: 'pointer', 
+                  fontWeight: activeTab === 'ads' ? 700 : 500,
+                  color: activeTab === 'ads' ? '#2563eb' : '#64748b',
+                  borderBottom: activeTab === 'ads' ? '2px solid #2563eb' : '2px solid transparent',
+                  paddingBottom: 4
+                }}>
+                Hiệu suất Ads
+              </button>
             </div>
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
@@ -176,7 +199,11 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Stat Cards - hàng 1 */}
+        {activeTab === 'ads' ? (
+          <AdsPerformance />
+        ) : (
+          <>
+            {/* Stat Cards - hàng 1 */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
           <StatCard
             icon="💬" label="Tổng hội thoại"
@@ -410,6 +437,8 @@ export default function Dashboard() {
           </div>
 
         </div>
+        </>
+        )}
 
       </div>
 

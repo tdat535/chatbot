@@ -41,6 +41,9 @@ async function initSchema() {
       avatar_url TEXT,
       notes TEXT,
       tags JSON,
+      source VARCHAR(50) DEFAULT 'organic',
+      ad_id VARCHAR(255),
+      ref VARCHAR(255),
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       UNIQUE KEY uniq_channel_user (channel, channel_user_id)
@@ -133,6 +136,32 @@ async function initSchema() {
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
   `);
+
+  // Bảng campaigns
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS campaigns (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      platform VARCHAR(50) DEFAULT 'facebook',
+      budget_spent DECIMAL(15,2) DEFAULT 0,
+      tracking_ref VARCHAR(255) NOT NULL,
+      start_date DATETIME DEFAULT NULL,
+      end_date DATETIME DEFAULT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+  `);
+
+  // Migration: source, ad_id, ref trong customers
+  const [[sourceCol]] = await pool.execute(`
+    SELECT COUNT(*) AS cnt FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'customers' AND COLUMN_NAME = 'source'
+  `);
+  if (!sourceCol.cnt) {
+    await pool.execute("ALTER TABLE customers ADD COLUMN source VARCHAR(50) DEFAULT 'organic'");
+    await pool.execute("ALTER TABLE customers ADD COLUMN ad_id VARCHAR(255) DEFAULT NULL");
+    await pool.execute("ALTER TABLE customers ADD COLUMN ref VARCHAR(255) DEFAULT NULL");
+  }
 
   // Tạo tài khoản admin mặc định nếu chưa có user nào
   const [existing] = await pool.execute('SELECT id FROM users LIMIT 1');

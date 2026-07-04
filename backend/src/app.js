@@ -19,6 +19,7 @@ const statsRoutes = require('./routes/stats');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const broadcastRoutes = require('./routes/broadcast');
+const campaignsRoutes = require('./routes/campaigns');
 const { handleIncomingMessage } = require('./services/autoReply');
 
 const app = express();
@@ -75,6 +76,7 @@ app.use('/api/customers', apiLimiter, customerRoutes);
 app.use('/api/templates', apiLimiter, templateRoutes);
 app.use('/api/stats', apiLimiter, statsRoutes);
 app.use('/api/broadcast', apiLimiter, broadcastRoutes);
+app.use('/api/campaigns', apiLimiter, campaignsRoutes);
 app.get('/api/health', (req, res) => res.json({ status: 'ok', db: 'mysql' }));
 
 // Socket.io - Website chat

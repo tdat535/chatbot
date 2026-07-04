@@ -88,8 +88,19 @@ router.post('/facebook', async (req, res) => {
         avatarUrl = profile.profile_pic || null;
       }
 
+      const referral = event.message?.referral || event.referral || event.postback?.referral;
+      let ad_id = null;
+      let ref = null;
+      let source = 'organic';
+
+      if (referral) {
+        source = 'facebook_ads';
+        ad_id = referral.ad_id || null;
+        ref = referral.ref || null;
+      }
+
       await handleIncomingMessage(
-        { channel: 'facebook', channelUserId: senderId, senderName, message: text, avatarUrl, pageId: entry.id },
+        { channel: 'facebook', channelUserId: senderId, senderName, message: text, avatarUrl, pageId: entry.id, source, ad_id, ref },
         io
       );
     }

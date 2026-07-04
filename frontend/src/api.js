@@ -41,6 +41,12 @@ export const deleteTemplate = (id) => api.delete(`/templates/${id}`);
 export const getDashboardStats = () => api.get('/stats');
 export const exportStats = (params) => api.get('/stats/export', { params });
 
+// Campaigns
+export const getCampaigns = () => api.get('/campaigns');
+export const createCampaign = (data) => api.post('/campaigns', data);
+export const updateCampaign = (id, data) => api.put(`/campaigns/${id}`, data);
+export const deleteCampaign = (id) => api.delete(`/campaigns/${id}`);
+
 // Broadcast
 export const broadcast = (data) => api.post('/broadcast', data);
 

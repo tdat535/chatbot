@@ -68,15 +68,29 @@ async function sendBotReply(channel, channelUserId, conversationId, text, io, pa
   return { conv, msg };
 }
 
-async function handleIncomingMessage({ channel, channelUserId, senderName, message, avatarUrl, pageId }, io) {
-  // 1. Upsert customer
-  await db.run(`
-    INSERT INTO customers (name, channel, channel_user_id, avatar_url)
-    VALUES (?, ?, ?, ?)
-    ON DUPLICATE KEY UPDATE
-      name = IF(name = 'Khách hàng', VALUES(name), name),
-      updated_at = CURRENT_TIMESTAMP
-  `, [senderName || 'Khách hàng', channel, channelUserId, avatarUrl || null]);
+async function handleIncomingMessage({ channel, channelUserId, senderName, message, avatarUrl, pageId, source = 'organic', ad_id = null, ref = null }, io) {
+  // 1. Check if customer exists to avoid overwriting source if they are returning
+  const existingCustomer = await db.get(
+    'SELECT id FROM customers WHERE channel = ? AND channel_user_id = ?',
+    [channel, channelUserId]
+  );
+
+  if (!existingCustomer) {
+    // 1. Insert new customer with tracking info
+    await db.run(`
+      INSERT INTO customers (name, channel, channel_user_id, avatar_url, source, ad_id, ref)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `, [senderName || 'Khách hàng', channel, channelUserId, avatarUrl || null, source, ad_id, ref]);
+  } else {
+    // 1. Update existing customer (name and avatar only, don't overwrite source)
+    await db.run(`
+      UPDATE customers SET
+        name = IF(name = 'Khách hàng', ?, name),
+        avatar_url = IFNULL(?, avatar_url),
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `, [senderName || 'Khách hàng', avatarUrl || null, existingCustomer.id]);
+  }
 
   const customer = await db.get(
     'SELECT id, name, phone FROM customers WHERE channel = ? AND channel_user_id = ?',
