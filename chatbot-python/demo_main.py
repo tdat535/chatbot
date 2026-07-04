@@ -252,12 +252,22 @@ def lookup_tuition_from_json(full_question: str, search_query: str) -> str | Non
     """
     q_all = (full_question + " " + search_query).lower()
     search_norm = _normalize(search_query)
+    q_current = search_query.lower()  # Chỉ dùng câu hỏi hiện tại để detect hệ
 
-    # 1. Xác định hệ đào tạo
-    wants_cd18 = any(kw in q_all for kw in ["cd18", "cđ18", "chính quy", "cao đẳng chính quy"])
-    wants_cd15 = any(kw in q_all for kw in ["cd15", "9+3+1", "học nghề", "vừa học vừa thi", "thcs"])
+    # 1. Xác định hệ đào tạo — chỉ đọc câu hỏi hiện tại, không đọc lịch sử
+    wants_cd18 = any(kw in q_current for kw in ["cd18", "cđ18", "chính quy", "cao đẳng chính quy"])
+    wants_cd15 = any(kw in q_current for kw in ["cd15", "9+3+1", "học nghề", "vừa học vừa thi", "thcs"])
 
-    # Nếu chưa rõ hệ → nói khoảng giá chung rồi hỏi ngược
+    # Chua ro he
+    is_asking_pa = any(kw in search_norm for kw in ["pa1", "pa2", "phuong an", "pa 1", "pa 2"])
+
+    if is_asking_pa:
+        cd18_pa = TUITION_DATA.get("cd18k20_dai_hoc_cao_dang", {}).get("phuong_an_giai_thich", {})
+        lines = ["Giai thich 2 phuong an dong hoc phi:"]
+        if cd18_pa.get("PA1"): lines.append(f"PA1: {cd18_pa['PA1']}")
+        if cd18_pa.get("PA2"): lines.append(f"PA2: {cd18_pa['PA2']}")
+        return "\n".join(lines)
+
     if not wants_cd18 and not wants_cd15:
         all_prices = []
         for sk in ["cd18k20_dai_hoc_cao_dang", "cd15k8_thcs_to_cao_dang"]:
@@ -270,12 +280,12 @@ def lookup_tuition_from_json(full_question: str, search_query: str) -> str | Non
         range_str = ""
         if all_prices:
             mn, mx = min(all_prices), max(all_prices)
-            range_str = f"từ {_fmt_money(mn)} đến {_fmt_money(mx)}/HK"
+            range_str = f"t\u1eeb {_fmt_money(mn)} \u0111\u1ebfn {_fmt_money(mx)}/HK"
         return (
-            f"Học phí tại Viễn Đông dao động {range_str} tùy ngành và hệ đào tạo nha. "
-            f"Bạn đang học theo hệ nào để mình báo chính xác hơn?\n"
-            f"- CĐ18: Cao đẳng chính quy (2.5 năm) — dành cho học sinh tốt nghiệp THPT\n"
-            f"- CD15: Hệ 9+3+1 vừa học nghề vừa thi tốt nghiệp THPT — dành cho học sinh THCS"
+            f"H\u1ecdc ph\u00ed t\u1ea1i Vi\u1ec5n \u0110\u00f4ng dao \u0111\u1ed9ng {range_str} t\u00f9y ng\u00e0nh v\u00e0 h\u1ec7 \u0111\u00e0o t\u1ea1o nha. "
+            f"B\u1ea1n \u0111ang h\u1ecdc theo h\u1ec7 n\u00e0o \u0111\u1ec3 m\u00ecnh b\u00e1o ch\u00ednh x\u00e1c h\u01a1n?\n"
+            f"- C\u0110\u0318: Cao \u0111\u1eb3ng ch\u00ednh quy (2.5 n\u0103m) \u2014 d\u00e0nh cho h\u1ecdc sinh t\u1ed1t nghi\u1ec7p THPT\n"
+            f"- CD15: H\u1ec7 9+3+1 v\u1eeba h\u1ecdc ngh\u1ec1 v\u1eeba thi t\u1ed1t nghi\u1ec7p THPT \u2014 d\u00e0nh cho h\u1ecdc sinh THCS"
         )
 
     system_key = "cd18k20_dai_hoc_cao_dang" if wants_cd18 else "cd15k8_thcs_to_cao_dang"
@@ -376,12 +386,7 @@ def lookup_tuition_from_json(full_question: str, search_query: str) -> str | Non
         lines.append(entry.strip())
 
     if luu_y:
-        lines.append(f"\n💡 Lưu ý: {luu_y}")
-
-    if is_asking_pa and pa_giai_thich:
-        lines.append("\n💡 Giải thích phương án:")
-        if pa_giai_thich.get("PA1"): lines.append(f"- PA1: {pa_giai_thich['PA1']}")
-        if pa_giai_thich.get("PA2"): lines.append(f"- PA2: {pa_giai_thich['PA2']}")
+        lines.append(f"\n\U0001f4a1 L\u01b0u \u00fd: {luu_y}")
 
     return "\n".join(lines).strip()
 
