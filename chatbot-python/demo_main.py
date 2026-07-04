@@ -252,11 +252,26 @@ def lookup_tuition_from_json(full_question: str, search_query: str) -> str | Non
     """
     q_all = (full_question + " " + search_query).lower()
     search_norm = _normalize(search_query)
-    q_current = search_query.lower()  # Chỉ dùng câu hỏi hiện tại để detect hệ
+    q_current = search_query.lower()  # Có thể là câu hỏi đã bị gộp với câu trước
+    
+    # Lấy câu hỏi thực sự cuối cùng (không gộp) để ưu tiên nhận diện hệ
+    lines = full_question.strip().split('\n')
+    last_q_only = ""
+    for line in reversed(lines):
+        if line.strip().startswith('Học sinh:'):
+            last_q_only = line[len('Học sinh:'):].strip().lower()
+            break
+    if not last_q_only:
+        last_q_only = q_current
 
-    # 1. Xác định hệ đào tạo — chỉ đọc câu hỏi hiện tại, không đọc lịch sử
-    wants_cd18 = any(kw in q_current for kw in ["cd18", "cđ18", "chính quy", "cao đẳng chính quy"])
-    wants_cd15 = any(kw in q_current for kw in ["cd15", "9+3+1", "học nghề", "vừa học vừa thi", "thcs"])
+    # 1. Xác định hệ đào tạo — ưu tiên câu hỏi cuối cùng
+    wants_cd18 = any(kw in last_q_only for kw in ["cd18", "cđ18", "chính quy", "cao đẳng chính quy"])
+    wants_cd15 = any(kw in last_q_only for kw in ["cd15", "9+3+1", "học nghề", "vừa học vừa thi", "thcs"])
+    
+    # Nếu câu cuối không nói hệ, thử dò trong câu gộp (ngữ cảnh trước đó)
+    if not wants_cd18 and not wants_cd15:
+        wants_cd18 = any(kw in q_current for kw in ["cd18", "cđ18", "chính quy", "cao đẳng chính quy"])
+        wants_cd15 = any(kw in q_current for kw in ["cd15", "9+3+1", "học nghề", "vừa học vừa thi", "thcs"])
 
     # Chua ro he
     is_asking_pa = any(kw in search_norm for kw in ["pa1", "pa2", "phuong an", "pa 1", "pa 2"])
