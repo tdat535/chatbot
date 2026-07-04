@@ -4,9 +4,17 @@ import faiss
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
-DATA_FOLDER = "data-txt"
+DATA_FOLDER把一些城市 = "data-txt"
 
 model = SentenceTransformer("intfloat/multilingual-e5-base")
+
+def get_system_tag(text_fragment):
+    h = text_fragment.lower()
+    if 'cd18' in h or 'cđ18' in h or 'chính quy' in h:
+        return '[HỆ: CD18]'
+    if 'cd15' in h or '9+3+1' in h:
+        return '[HỆ: CD15]'
+    return ''
 
 def split_faq(text):
     """
@@ -20,15 +28,17 @@ def split_faq(text):
         part = part.strip()
         if not part:
             continue
+        system_tag = get_system_tag(part)
+        tag_prefix = f"{system_tag}\n" if system_tag else ""
         if len(part) > 800:
             sub_parts = [p.strip() for p in part.split('\n\n') if p.strip()]
             heading = sub_parts[0] if sub_parts else ""
             for sp in sub_parts[1:]:
-                chunks.append(f"{heading}\n{sp}")
+                chunks.append(f"{tag_prefix}{heading}\n{sp}")
             if sub_parts:
-                chunks.append(sub_parts[0])
+                chunks.append(f"{tag_prefix}{sub_parts[0]}")
         else:
-            chunks.append(part)
+            chunks.append(f"{tag_prefix}{part}")
 
     if not chunks:
         # Fallback: chia theo paragraph

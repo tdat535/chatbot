@@ -1,5 +1,7 @@
 import os
 import re
+import json
+import unicodedata
 import faiss
 import numpy as np
 from fastapi import FastAPI, UploadFile, File, HTTPException, Request
@@ -28,6 +30,18 @@ client = Groq(api_key=GROQ_API_KEY)
 STORAGE_DIR = os.getenv("STORAGE_DIR", ".")
 INDEX_PATH  = os.path.join(STORAGE_DIR, "school_index.faiss")
 CHUNKS_PATH = os.path.join(STORAGE_DIR, "chunks.txt")
+
+# =============================
+# Load Tuition JSON
+# =============================
+TUITION_JSON_PATH = os.path.join(os.path.dirname(__file__), "pdfs", "hoc_phi_viendong.json")
+try:
+    with open(TUITION_JSON_PATH, "r", encoding="utf-8") as _f:
+        TUITION_DATA = json.load(_f)
+    print(f"✅ Loaded tuition JSON: {TUITION_JSON_PATH}")
+except Exception as _e:
+    TUITION_DATA = {}
+    print(f"⚠️ Không tải được tuition JSON: {_e}")
 
 # =============================
 # FastAPI Init
@@ -200,6 +214,160 @@ def get_chunks():
 
 
 # =============================
+# Tuition JSON Lookup
+# =============================
+def _normalize(text: str) -> str:
+    """Chuẩn hóa chuỗi: bỏ dấu, lowercase, bỏ ký tự thừa."""
+    nfkd = unicodedata.normalize("NFKD", text)
+    ascii_str = "".join(c for c in nfkd if not unicodedata.combining(c))
+    return re.sub(r"[^a-z0-9 ]", " ", ascii_str.lower()).strip()
+
+
+def _match_major(query_norm: str, major_name: str) -> bool:
+    """Kiểm tra query có đề cập tên ngành không (bỏ dấu, bỏ ngoặc)."""
+    # Bỏ phần ghi chú trong ngoặc để so khớp tên chính
+    clean = re.sub(r"\(.*?\)", "", major_name).strip()
+    major_norm = _normalize(clean)
+    # Tách từ ngành thành tokens; yêu cầu ít nhất 1 token khớp liên tiếp
+    major_tokens = major_norm.split()
+    # Kiểm tra substring hoặc tất cả token quan trọng (>=4 ký tự) có trong query
+    key_tokens = [t for t in major_tokens if len(t) >= 4]
+    if not key_tokens:
+        key_tokens = major_tokens
+    return any(t in query_norm for t in key_tokens)
+
+
+def _fmt_money(amount) -> str:
+    if amount is None:
+        return "?"
+    return f"{amount:,.0f}".replace(",", ".") + "đ"
+
+
+def lookup_tuition_from_json(full_question: str, search_query: str) -> str | None:
+    """
+    Tra cứu học phí từ TUITION_DATA (hoc_phi_viendong.json).
+    Trả về chuỗi trả lời hoặc None nếu không đủ thông tin.
+    """
+    q_all = (full_question + " " + search_query).lower()
+    q_norm = _normalize(q_all)
+
+    # 1. Xác định hệ đào tạo
+    wants_cd18 = any(kw in q_all for kw in ["cd18", "cđ18", "chính quy", "cao đẳng chính quy"])
+    wants_cd15 = any(kw in q_all for kw in ["cd15", "9+3+1", "học nghề", "vừa học vừa thi", "thcs"])
+
+    # Nếu chưa rõ hệ → nói khoảng giá chung rồi hỏi ngược
+    if not wants_cd18 and not wants_cd15:
+        all_prices = []
+        for sk in ["cd18k20_dai_hoc_cao_dang", "cd15k8_thcs_to_cao_dang"]:
+            sd = TUITION_DATA.get(sk, {})
+            for n in sd.get("danh_sach_nganh", []):
+                p2 = n.get("PA2", {})
+                v = p2.get("tam_thu_hk1") or p2.get("hoc_phi_phai_dong_moi_hk")
+                if v:
+                    all_prices.append(v)
+        range_str = ""
+        if all_prices:
+            mn, mx = min(all_prices), max(all_prices)
+            range_str = f"từ {_fmt_money(mn)} đến {_fmt_money(mx)}/HK"
+        return (
+            f"Học phí tại Viễn Đông dao động {range_str} tùy ngành và hệ đào tạo nha. "
+            f"Bạn đang học theo hệ nào để mình báo chính xác hơn?\n"
+            f"- CĐ18: Cao đẳng chính quy (2.5 năm) — dành cho học sinh tốt nghiệp THPT\n"
+            f"- CD15: Hệ 9+3+1 vừa học nghề vừa thi tốt nghiệp THPT — dành cho học sinh THCS"
+        )
+
+    system_key = "cd18k20_dai_hoc_cao_dang" if wants_cd18 else "cd15k8_thcs_to_cao_dang"
+    system_data = TUITION_DATA.get(system_key, {})
+    if not system_data:
+        return None
+
+    label = "Hệ Cao đẳng chính quy (CĐ18)" if wants_cd18 else "Hệ 9+3+1 - Học nghề (CD15)"
+    luu_y = system_data.get("luu_y_dong_hoc_phi", "")
+
+    # 2. Tìm ngành khớp trong danh sách
+    danh_sach = system_data.get("danh_sach_nganh", [])
+    matched = [n for n in danh_sach if _match_major(q_norm, n.get("nganh_hoc", ""))]
+
+    # Nếu không khớp ngành cụ thể → hỏi ngược ngành (không để FAISS/LLM trả bừa)
+    if not matched:
+        label = "Hệ Cao đẳng chính quy (CĐ18)" if wants_cd18 else "Hệ 9+3+1 - Học nghề (CD15)"
+        # Tính khoảng học phí PA2 (đóng thực tế thấp nhất) của hệ đó
+        if wants_cd18:
+            prices = [
+                n["PA2"]["tam_thu_hk1"]
+                for n in danh_sach
+                if n.get("PA2", {}).get("tam_thu_hk1")
+            ]
+        else:
+            prices = [
+                n["PA2"]["hoc_phi_phai_dong_moi_hk"]
+                for n in danh_sach
+                if n.get("PA2", {}).get("hoc_phi_phai_dong_moi_hk")
+            ]
+        range_str = ""
+        if prices:
+            mn, mx = min(prices), max(prices)
+            if mn == mx:
+                range_str = f"khoảng {_fmt_money(mn)}/HK"
+            else:
+                range_str = f"từ {_fmt_money(mn)} đến {_fmt_money(mx)}/HK"
+        return (
+            f"Học phí {label} dao động {range_str} tùy ngành nha "
+            f"(đây là mức đóng thực tế theo PA2, sau khi đã trừ trợ cấp nhà nước). "
+            f"Bạn muốn xem học phí ngành nào cụ thể?"
+        )
+
+    # Lấy ngành khớp đầu tiên (hoặc tất cả nếu nhiều)
+    lines = [f"Có 2 phương án đóng học phí, PH chọn 1 trong 2 phương án đều được ạ\n"]
+
+    for nganh in matched[:3]:  # tối đa 3 ngành nếu query chung chung
+        name = nganh["nganh_hoc"]
+        pa1 = nganh.get("PA1", {})
+        pa2 = nganh.get("PA2", {})
+
+        if wants_cd18:
+            # CD18: tam_thu_hk1 + tron_khoa + cap_bu (nếu có)
+            pa1_hk = pa1.get("tam_thu_hk1")
+            pa1_tk = pa1.get("tron_khoa")
+            pa2_hk = pa2.get("tam_thu_hk1")
+            pa2_tk = pa2.get("tron_khoa")
+            cap_bu = pa1.get("cap_bu_6_hk")
+
+            entry = f"Ngành {name}:\n"
+            if pa1_hk and pa1_tk:
+                entry += f"- PA1: tạm thu {_fmt_money(pa1_hk)}/HK (trọn khóa {_fmt_money(pa1_tk)})"
+                if cap_bu:
+                    entry += f" — Nhà nước cấp bù {_fmt_money(cap_bu)}/6HK"
+                entry += "\n"
+            if pa2_hk and pa2_tk:
+                entry += f"- PA2: {_fmt_money(pa2_hk)}/HK (trọn khóa {_fmt_money(pa2_tk)})\n"
+
+            ghi_chu = nganh.get("ghi_chu")
+            if ghi_chu:
+                entry += f"  ({ghi_chu})\n"
+
+        else:
+            # CD15: hoc_phi_phai_dong_moi_hk + hoan_tra
+            pa1_hk = pa1.get("hoc_phi_phai_dong_moi_hk")
+            pa1_ht = pa1.get("hoc_phi_nha_nuoc_hoan_tra_moi_hk")
+            pa2_hk = pa2.get("hoc_phi_phai_dong_moi_hk")
+
+            entry = f"Ngành {name}:\n"
+            if pa1_hk:
+                entry += f"- PA1: {_fmt_money(pa1_hk)}/HK"
+                if pa1_ht:
+                    entry += f" (Nhà nước hoàn trả {_fmt_money(pa1_ht)}/HK sau)"
+                entry += "\n"
+            if pa2_hk:
+                entry += f"- PA2: {_fmt_money(pa2_hk)}/HK\n"
+
+        lines.append(entry.strip())
+
+    lines.append(f"\n{luu_y}" if luu_y else "")
+    return "\n\n".join(l for l in lines if l).strip()
+
+
+# =============================
 # Main Ask Endpoint
 # =============================
 def extract_last_question(text: str) -> str:
@@ -261,9 +429,19 @@ async def ask(request: Request, question: str):
     # Tách câu hỏi thực sự để search (không search cả đoạn hội thoại)
     search_query = extract_last_question(question)
 
+    TUITION_KEYWORDS = ["học phí", "hoc phi", "chi phí", "đóng tiền", "phương án", "pa1", "pa2", "đóng bao nhiêu", "tốn bao nhiêu", "mất bao nhiêu"]
+    is_tuition_q = any(kw in search_query.lower() for kw in TUITION_KEYWORDS)
+
+    # ── Bypass LLM cho câu hỏi học phí — tra cứu thẳng từ JSON ──
+    if is_tuition_q and TUITION_DATA:
+        tuition_answer = lookup_tuition_from_json(question, search_query)
+        if tuition_answer:
+            return {"answer": tuition_answer}
+        # Nếu JSON không khớp → để fallthrough xuống FAISS + LLM bình thường
+
     try:
         loop = asyncio.get_event_loop()
-        search_results = await loop.run_in_executor(None, search_documents, search_query)
+        search_results = await loop.run_in_executor(None, lambda: search_documents(search_query, 12))
 
         if not search_results:
             return {
@@ -283,82 +461,6 @@ async def ask(request: Request, question: str):
         good_results = [(s, d) for s, d in search_results if s >= 0.30]
         context_chunks = [doc for _, doc in good_results[:5]]
         context = "\n\n---\n\n".join(context_chunks)
-
-        TUITION_KEYWORDS = ["học phí", "hoc phi", "chi phí", "đóng tiền", "phương án", "pa1", "pa2", "đóng bao nhiêu", "tốn bao nhiêu", "mất bao nhiêu"]
-        is_tuition_q = any(kw in search_query.lower() for kw in TUITION_KEYWORDS)
-
-        # Bypass LLM cho câu hỏi học phí — trả thẳng text từ chunk để tránh hallucinate số tiền
-        if is_tuition_q:
-            def detect_system(chunk):
-                low = chunk.lower()
-                if "cd18" in low or "cđ18" in low or "chính quy" in low:
-                    return "CD18"
-                if "cd15" in low or "9+3+1" in low:
-                    return "CD15"
-                return "unknown"
-
-            def extract_pa_sections(chunk):
-                sections = []
-                paragraphs = [p.strip() for p in re.split(r'\n\n+', chunk) if p.strip()]
-                for para in paragraphs:
-                    lines = [l.strip() for l in para.splitlines() if l.strip()]
-                    pa1 = next((l for l in lines if l.lower().startswith("- pa1") or l.lower().startswith("pa1")), None)
-                    pa2 = next((l for l in lines if l.lower().startswith("- pa2") or l.lower().startswith("pa2")), None)
-                    if pa1 and pa2:
-                        heading = next((l for l in lines if not l.startswith("[") and "pa1" not in l.lower() and "pa2" not in l.lower() and len(l) > 5), "")
-                        sections.append((heading, pa1, pa2))
-                return sections
-
-            # Detect hệ từ toàn bộ conversation (kể cả lịch sử chat)
-            q_lower = question.lower()
-            wants_cd18 = any(kw in q_lower for kw in ["cd18", "cđ18", "chính quy", "cao đẳng chính quy", "18"])
-            wants_cd15 = any(kw in q_lower for kw in ["cd15", "9+3+1", "học nghề", "15", "vừa học vừa thi"])
-
-            # Chưa rõ hệ → hỏi ngược lại
-            if not wants_cd18 and not wants_cd15:
-                return {"answer": "Trường có 2 hệ đào tạo nha, bạn đang hỏi hệ nào?\n- CĐ18: Cao đẳng chính quy (2.5 năm)\n- CD15: Hệ 9+3+1 vừa học nghề vừa thi tốt nghiệp THPT"}
-
-            target_system = "CD18" if wants_cd18 else "CD15"
-            label = "Hệ Cao đẳng chính quy (CĐ18)" if wants_cd18 else "Hệ 9+3+1 - Học nghề (CD15)"
-
-            # Bước 1: dùng FAISS results (đã semantic search) — chính xác nhất
-            target_chunk = None
-            for _, doc in search_results:
-                if "pa1" not in doc.lower() or "pa2" not in doc.lower():
-                    continue
-                if detect_system(doc) != target_system:
-                    continue
-                if extract_pa_sections(doc):
-                    target_chunk = doc
-                    break
-
-            # Bước 2: fallback — scan toàn bộ documents, chỉ lấy chunk có score > 0
-            if not target_chunk:
-                stop = {"học", "phí", "ngành", "hỏi", "muốn", "bao", "nhiêu", "tôi", "của", "cho", "là", "và", "á", "ạ", "cd18", "cd15", "hệ"}
-                subject_kws = [w for w in re.split(r'[\s,\.]+', search_query.lower()) if len(w) > 2 and w not in stop]
-                best_score, best_doc = 0, None
-                for doc in documents:
-                    if "pa1" not in doc.lower() or "pa2" not in doc.lower():
-                        continue
-                    if detect_system(doc) != target_system:
-                        continue
-                    score = sum(1 for kw in subject_kws if kw in doc.lower())
-                    if score > best_score and extract_pa_sections(doc):
-                        best_score, best_doc = score, doc
-                if best_doc:
-                    target_chunk = best_doc
-
-            if target_chunk:
-                heading, pa1, pa2 = extract_pa_sections(target_chunk)[0]
-                entry = f"{heading}\n{pa1}\n{pa2}" if heading else f"{pa1}\n{pa2}"
-                out = [
-                    f"Học phí {label}, có 2 phương án PH chọn 1 đều được nha 💰",
-                    entry,
-                    "\nMỗi HK chia đóng 2-3 lần, đợt 1 HK1 tối thiểu 5 triệu."
-                ]
-                return {"answer": "\n".join(out)}
-
-            return {"answer": "Mình chưa tìm thấy thông tin học phí cụ thể cho ngành này 🤔 Bạn nhắn Zalo 0922334400 (Cô Thơ) hoặc 0977334400 (Cô Thu) để được báo giá chi tiết theo 2 PA nha!"}
 
         messages = [
             {

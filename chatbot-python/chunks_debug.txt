@@ -1,0 +1,67 @@
+Total chunks: 33
+Chunk 0: len=636 | first_line=[2 PHƯƠNG ÁN ĐÓNG HỌC PHÍ – ÁP DỤNG CHO HỌC SINH NHẬP HỌC NĂM HỌC 2026-2027]
+  -> System: UNKNOWN
+Chunk 1: len=429 | first_line=[2 PHƯƠNG ÁN ĐÓNG HỌC PHÍ – ÁP DỤNG CHO HỌC SINH NHẬP HỌC NĂM HỌC 2026-2027]
+  -> System: UNKNOWN
+Chunk 2: len=249 | first_line=[2 PHƯƠNG ÁN ĐÓNG HỌC PHÍ – ÁP DỤNG CHO HỌC SINH NHẬP HỌC NĂM HỌC 2026-2027]
+  -> System: UNKNOWN
+Chunk 3: len=155 | first_line=[2 PHƯƠNG ÁN ĐÓNG HỌC PHÍ – ÁP DỤNG CHO HỌC SINH NHẬP HỌC NĂM HỌC 2026-2027]
+  -> System: UNKNOWN
+Chunk 4: len=503 | first_line=[HỌC PHÍ CAO ĐẲNG CHÍNH QUY – HỆ CĐ18K20 – NĂM HỌC 2026-2027]
+  -> System: CD18
+Chunk 5: len=563 | first_line=[HỌC PHÍ CAO ĐẲNG CHÍNH QUY – HỆ CĐ18K20 – NĂM HỌC 2026-2027]
+  -> System: CD18
+Chunk 6: len=441 | first_line=[HỌC PHÍ CAO ĐẲNG CHÍNH QUY – HỆ CĐ18K20 – NĂM HỌC 2026-2027]
+  -> System: CD18
+Chunk 7: len=430 | first_line=[HỌC PHÍ CAO ĐẲNG CHÍNH QUY – HỆ CĐ18K20 – NĂM HỌC 2026-2027]
+  -> System: CD18
+Chunk 8: len=416 | first_line=[HỌC PHÍ CAO ĐẲNG CHÍNH QUY – HỆ CĐ18K20 – NĂM HỌC 2026-2027]
+  -> System: CD18
+Chunk 9: len=433 | first_line=[HỌC PHÍ CAO ĐẲNG CHÍNH QUY – HỆ CĐ18K20 – NĂM HỌC 2026-2027]
+  -> System: CD18
+Chunk 10: len=394 | first_line=[HỌC PHÍ CAO ĐẲNG CHÍNH QUY – HỆ CĐ18K20 – NĂM HỌC 2026-2027]
+  -> System: CD18
+Chunk 11: len=526 | first_line=[HỌC PHÍ CAO ĐẲNG CHÍNH QUY – HỆ CĐ18K20 – NĂM HỌC 2026-2027]
+  -> System: CD18
+Chunk 12: len=194 | first_line=[HỌC PHÍ CAO ĐẲNG CHÍNH QUY – HỆ CĐ18K20 – NĂM HỌC 2026-2027]
+  -> System: CD18
+Chunk 13: len=649 | first_line=[HỌC PHÍ HỆ CAO ĐẲNG 9+3+1 – CD15K8 – NĂM HỌC 2026-2027]
+  -> System: CD15
+Chunk 14: len=599 | first_line=[HỌC PHÍ HỆ CAO ĐẲNG 9+3+1 – CD15K8 – NĂM HỌC 2026-2027]
+  -> System: CD15
+Chunk 15: len=563 | first_line=[HỌC PHÍ HỆ CAO ĐẲNG 9+3+1 – CD15K8 – NĂM HỌC 2026-2027]
+  -> System: CD15
+Chunk 16: len=645 | first_line=[HỌC PHÍ HỆ CAO ĐẲNG 9+3+1 – CD15K8 – NĂM HỌC 2026-2027]
+  -> System: CD15
+Chunk 17: len=614 | first_line=[HỌC PHÍ HỆ CAO ĐẲNG 9+3+1 – CD15K8 – NĂM HỌC 2026-2027]
+  -> System: CD15
+Chunk 18: len=643 | first_line=[HỌC PHÍ HỆ CAO ĐẲNG 9+3+1 – CD15K8 – NĂM HỌC 2026-2027]
+  -> System: CD15
+Chunk 19: len=628 | first_line=[HỌC PHÍ HỆ CAO ĐẲNG 9+3+1 – CD15K8 – NĂM HỌC 2026-2027]
+  -> System: CD15
+Chunk 20: len=438 | first_line=[HỌC PHÍ HỆ CAO ĐẲNG 9+3+1 – CD15K8 – NĂM HỌC 2026-2027]
+  -> System: CD15
+Chunk 21: len=1003 | first_line=[HỌC PHÍ GIAI ĐOẠN 2 – LIÊN THÔNG CAO ĐẲNG HỆ 04CD15 – ĐẠI HỌC 1 NĂM]
+  -> System: CD15
+Chunk 22: len=311 | first_line=[HỌC PHÍ GIAI ĐOẠN 2 – LIÊN THÔNG CAO ĐẲNG HỆ 04CD15 – ĐẠI HỌC 1 NĂM]
+  -> System: CD15
+Chunk 23: len=190 | first_line=[HỌC PHÍ GIAI ĐOẠN 2 – LIÊN THÔNG CAO ĐẲNG HỆ 04CD15 – ĐẠI HỌC 1 NĂM]
+  -> System: CD15
+Chunk 24: len=275 | first_line=[SƠ ĐỒ NGÀNH ĐÀO TẠO VÀ LIÊN THÔNG ĐẠI HỌC – CĐ VIỄN ĐÔNG – 3-4 NĂM CÓ 2 BẰNG]
+  -> System: UNKNOWN
+Chunk 25: len=212 | first_line=[SƠ ĐỒ NGÀNH ĐÀO TẠO VÀ LIÊN THÔNG ĐẠI HỌC – CĐ VIỄN ĐÔNG – 3-4 NĂM CÓ 2 BẰNG]
+  -> System: UNKNOWN
+Chunk 26: len=260 | first_line=[SƠ ĐỒ NGÀNH ĐÀO TẠO VÀ LIÊN THÔNG ĐẠI HỌC – CĐ VIỄN ĐÔNG – 3-4 NĂM CÓ 2 BẰNG]
+  -> System: UNKNOWN
+Chunk 27: len=235 | first_line=[SƠ ĐỒ NGÀNH ĐÀO TẠO VÀ LIÊN THÔNG ĐẠI HỌC – CĐ VIỄN ĐÔNG – 3-4 NĂM CÓ 2 BẰNG]
+  -> System: UNKNOWN
+Chunk 28: len=179 | first_line=[SƠ ĐỒ NGÀNH ĐÀO TẠO VÀ LIÊN THÔNG ĐẠI HỌC – CĐ VIỄN ĐÔNG – 3-4 NĂM CÓ 2 BẰNG]
+  -> System: UNKNOWN
+Chunk 29: len=230 | first_line=[SƠ ĐỒ NGÀNH ĐÀO TẠO VÀ LIÊN THÔNG ĐẠI HỌC – CĐ VIỄN ĐÔNG – 3-4 NĂM CÓ 2 BẰNG]
+  -> System: UNKNOWN
+Chunk 30: len=174 | first_line=[SƠ ĐỒ NGÀNH ĐÀO TẠO VÀ LIÊN THÔNG ĐẠI HỌC – CĐ VIỄN ĐÔNG – 3-4 NĂM CÓ 2 BẰNG]
+  -> System: UNKNOWN
+Chunk 31: len=78 | first_line=[SƠ ĐỒ NGÀNH ĐÀO TẠO VÀ LIÊN THÔNG ĐẠI HỌC – CĐ VIỄN ĐÔNG – 3-4 NĂM CÓ 2 BẰNG]
+  -> System: UNKNOWN
+Chunk 32: len=163 | first_line=[HỌC PHÍ THEO TÍN CHỈ – GIÁ 1 TÍN CHỈ TẠI CĐ VIỄN ĐÔNG]
+  -> System: UNKNOWN

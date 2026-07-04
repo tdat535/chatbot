@@ -1,3 +1,7 @@
 {
-    "liveServer.settings.port": 5501
+    "liveServer.settings.port": 5501,
+    "python.defaultInterpreterPath": "${workspaceFolder}/chatbot-python/venv/Scripts/python.exe",
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/chatbot-python/venv/Lib/site-packages"
+    ]
 }

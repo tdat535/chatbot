@@ -1,0 +1,609 @@
+{
+  "cd15k8_thcs_to_cao_dang": {
+    "title": "HỌC PHÍ DÀNH CHO HỌC SINH TỐT NGHIỆP THCS HỌC CAO ĐẲNG 9+3+1 (CD15K8)",
+    "nha_hoc": "2026-2027",
+    "cam_ket_dau_ra": "Tốt nghiệp được 3 bằng: THPT chính quy, Trung cấp, Cao đẳng",
+    "luu_y_dong_hoc_phi": "Học phí mỗi HK được chia làm 2 hoặc 3 lần đóng: đợt 1 HK1 đóng tối thiểu 5 triệu",
+    "phuong_an_giai_thich": {
+      "PA1": "Thu trực tiếp SV và SV nhận cấp bù sau. Học phí không bao gồm GDQP, Anh văn 1, 2, 3. Có thể học tiếng Đức, tiếng Hàn thay cho tiếng Anh.",
+      "PA2": "Thu phần chênh lệch khi trừ mức cấp bù và trường tự nhận lại cấp bù theo HĐ 3 bên. Không bao gồm GDQP, Anh văn 1, 2, 3. Có thể học tiếng Đức, tiếng Hàn thay cho tiếng Anh. - Đối với thí sinh chỉ học văn hoá, không học nghề: học phí 7.5 triệu/HK. - Đối với thí sinh chỉ học nghề, không học văn hoá: học phí sẽ lấy học phí phải đóng trừ 2.5 triệu."
+    },
+    "danh_sach_nganh": [
+      {
+        "stt": 1,
+        "nganh_hoc": "KẾ TOÁN",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 11000000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 8000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 6000000
+        }
+      },
+      {
+        "stt": 2,
+        "nganh_hoc": "QUẢN TRỊ KINH DOANH (Marketing, QTKD, Quan hệ công chúng, Thư ký y khoa)",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 11000000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 8000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 6000000
+        }
+      },
+      {
+        "stt": 3,
+        "nganh_hoc": "LOGISTICS",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 11000000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 8000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 6000000
+        }
+      },
+      {
+        "stt": 4,
+        "nganh_hoc": "Ô TÔ",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 14000000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 12000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 7000000
+        }
+      },
+      {
+        "stt": 5,
+        "nganh_hoc": "CƠ KHÍ",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 14000000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 12000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 7000000
+        }
+      },
+      {
+        "stt": 6,
+        "nganh_hoc": "ĐIỆN - ĐIỆN TỬ - ĐIỆN LẠNH",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 14000000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 12000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 7000000
+        }
+      },
+      {
+        "stt": 7,
+        "nganh_hoc": "THIẾT KẾ ĐỒ HỌA",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 13000000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 8000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 6500000
+        }
+      },
+      {
+        "stt": 8,
+        "nganh_hoc": "ĐỒ HỌA ĐA PHƯƠNG TIỆN (Chuyên ngành của Truyền Thông & Mạng MT)",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 14000000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 12000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 7000000
+        }
+      },
+      {
+        "stt": 9,
+        "nganh_hoc": "TRUYỀN THÔNG ĐA PHƯƠNG TIỆN",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 14000000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 12000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 7000000
+        }
+      },
+      {
+        "stt": 10,
+        "nganh_hoc": "THƯƠNG MẠI ĐIỆN TỬ",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 14000000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 12000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 6500000
+        }
+      },
+      {
+        "stt": 11,
+        "nganh_hoc": "CÔNG NGHỆ THÔNG TIN",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 14000000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 12000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 6500000
+        }
+      },
+      {
+        "stt": 12,
+        "nganh_hoc": "LẮP RÁP, CÀI ĐẶT MÁY TÍNH",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 14000000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 12000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 6500000
+        }
+      },
+      {
+        "stt": 13,
+        "nganh_hoc": "KỸ THUẬT CHẾ BIẾN MÓN ĂN",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 12500000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 10000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 6500000
+        }
+      },
+      {
+        "stt": 14,
+        "nganh_hoc": "HƯỚNG DẪN DU LỊCH",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 12500000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 10000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 6500000
+        }
+      },
+      {
+        "stt": 15,
+        "nganh_hoc": "NGHIỆP VỤ NHÀ HÀNG - KHÁCH SẠN",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 12500000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 10000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 6500000
+        }
+      },
+      {
+        "stt": 16,
+        "nganh_hoc": "TẠO MẪU & CHĂM SÓC SẮC ĐẸP",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 12500000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 10000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 6500000
+        }
+      },
+      {
+        "stt": 17,
+        "nganh_hoc": "ĐIỀU DƯỠNG CƠ SỞ/HỘ SINH (Chăm sóc Mẹ và bé sau sinh)",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 12500000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 10000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 6500000
+        }
+      },
+      {
+        "stt": 18,
+        "nganh_hoc": "DƯỢC SĨ",
+        "PA1": {
+          "hoc_phi_phai_dong_moi_hk": 12500000,
+          "hoc_phi_nha_nuoc_hoan_tra_moi_hk": 10000000
+        },
+        "PA2": {
+          "hoc_phi_phai_dong_moi_hk": 6500000
+        }
+      }
+    ],
+    "ghi_chu_chi_tiet": [
+      "Cách phụ huynh/sinh viên (SV) nhận lại tiền trợ cấp học phí học nghề từ Nhà nước theo Nghị định 238/2025:",
+      "- Mỗi đầu học kỳ khi SV đóng đủ học phí theo quy định của HK đó.",
+      "- Nhà trường tiến hành làm thủ tục: xác nhận các hồ sơ theo quy định và nộp về Phòng Giáo dục & Đào tạo, nơi SV có hộ khẩu thường trú (được áp dụng cho tất cả tỉnh/thành trong cả nước Việt Nam).",
+      "=> Thời gian nộp hồ sơ để được nhận tiền trợ cấp học phí: trong 45 ngày kể từ ngày bắt đầu của HK đó (theo lịch của Bộ GD&ĐT).",
+      "=> Phòng LĐ TB&XH các tỉnh/thành tiến hành kiểm tra hồ sơ và giải ngân, chuyển tiền cho phụ huynh/SV bằng hình thức chuyển khoản hoặc nhận tiền mặt vào giữa hoặc cuối HK của năm học đó.",
+      "+ Một năm học: SV nhận được tiền cấp bù 02 đợt gồm HK1, HK2.",
+      "+ Mỗi SV được hưởng 4 HK trong giai đoạn học Trung cấp, riêng đối với các khối ngành Kỹ thuật (Từ STT 4 - 6) và khối ngành Y dược (từ STT 17-18) tiếp tục được hưởng trợ cấp cả giai đoạn học Cao đẳng.",
+      "=> Tất cả các ngành được khai giảng khi sỉ số đăng ký tối thiểu 20 học sinh/ngành."
+    ]
+  },
+  "cd18k20_dai_hoc_cao_dang": {
+    "title": "DANH MỤC NGÀNH & HỌC PHÍ ĐẠI HỌC, CAO ĐẲNG NĂM HỌC 2026-2027 (CD18K20)",
+    "luu_y_dong_hoc_phi": "Học phí mỗi HK được chỉ làm 2 hoặc 3 lần đóng theo thời gian quy định: đợt 1 HK1 khi làm hồ sơ nhập học đóng tối thiểu 5 triệu. Có thể học tiếng Đức, tiếng Hàn thay thế cho tiếng Anh",
+    "phuong_an_giai_thich": {
+      "PA1": "Thu trực tiếp sv và SV nhận trợ cấp sau",
+      "PA2": "Thu chênh lệch của sv khi đã trừ trợ cấp và nhà trường sẽ nhận lại sau theo hợp đồng 3 bên"
+    },
+    "danh_sach_nganh": [
+      {
+        "stt": 1,
+        "nganh_hoc": "KẾ TOÁN",
+        "PA1": {
+          "tam_thu_hk1": 11000000,
+          "tron_khoa": 68000000,
+          "cap_bu_6_hk": null
+        },
+        "PA2": {
+          "tam_thu_hk1": 11000000,
+          "tron_khoa": 68000000
+        },
+        "lien_thong_dai_hoc": "ĐH Kinh tế TPHCM: 44.500.000 đồng/trọn khóa; ĐH Mở: 42.000.000 đồng/trọn khóa",
+        "ghi_chu": null
+      },
+      {
+        "stt": 2,
+        "nganh_hoc": "QUẢN TRỊ KINH DOANH",
+        "PA1": {
+          "tam_thu_hk1": 11000000,
+          "tron_khoa": 68000000,
+          "cap_bu_6_hk": null
+        },
+        "PA2": {
+          "tam_thu_hk1": 11000000,
+          "tron_khoa": 68000000
+        },
+        "lien_thong_dai_hoc": "ĐH Kinh tế TPHCM: 44.500.000 đồng/trọn khóa; ĐH Mở: 42.000.000 đồng/trọn khóa",
+        "ghi_chu": null
+      },
+      {
+        "stt": 3,
+        "nganh_hoc": "QUẢN TRỊ MARKETING",
+        "PA1": {
+          "tam_thu_hk1": 11000000,
+          "tron_khoa": 68000000,
+          "cap_bu_6_hk": null
+        },
+        "PA2": {
+          "tam_thu_hk1": 11000000,
+          "tron_khoa": 68000000
+        },
+        "lien_thong_dai_hoc": "ĐH Kinh tế TPHCM: 44.500.000 đồng/trọn khóa; ĐH Mở: 42.000.000 đồng/trọn khóa",
+        "ghi_chu": null
+      },
+      {
+        "stt": 4,
+        "nganh_hoc": "QUAN HỆ CÔNG CHÚNG",
+        "PA1": {
+          "tam_thu_hk1": 11000000,
+          "tron_khoa": 68000000,
+          "cap_bu_6_hk": null
+        },
+        "PA2": {
+          "tam_thu_hk1": 11000000,
+          "tron_khoa": 68000000
+        },
+        "lien_thong_dai_hoc": "ĐH Kinh tế TPHCM: 44.500.000 đồng/trọn khóa; ĐH Mở: 42.000.000 đồng/trọn khóa",
+        "ghi_chu": null
+      },
+      {
+        "stt": 5,
+        "nganh_hoc": "QUẢN TRỊ VĂN PHÒNG",
+        "PA1": {
+          "tam_thu_hk1": 11000000,
+          "tron_khoa": 68000000,
+          "cap_bu_6_hk": null
+        },
+        "PA2": {
+          "tam_thu_hk1": 11000000,
+          "tron_khoa": 68000000
+        },
+        "lien_thong_dai_hoc": "ĐH Kinh tế TPHCM: 44.500.000 đồng/trọn khóa; ĐH Mở: 42.000.000 đồng/trọn khóa",
+        "ghi_chu": null
+      },
+      {
+        "stt": 6,
+        "nganh_hoc": "TÀI CHÍNH NGÂN HÀNG",
+        "PA1": {
+          "tam_thu_hk1": 11000000,
+          "tron_khoa": 68000000,
+          "cap_bu_6_hk": null
+        },
+        "PA2": {
+          "tam_thu_hk1": 11000000,
+          "tron_khoa": 68000000
+        },
+        "lien_thong_dai_hoc": "ĐH Kinh tế TPHCM: 44.500.000 đồng/trọn khóa; ĐH Mở: 42.000.000 đồng/trọn khóa",
+        "ghi_chu": null
+      },
+      {
+        "stt": 7,
+        "nganh_hoc": "LOGISTICS (Ngành Hot lương cao)",
+        "PA1": {
+          "tam_thu_hk1": 11000000,
+          "tron_khoa": 68000000,
+          "cap_bu_6_hk": null
+        },
+        "PA2": {
+          "tam_thu_hk1": 11000000,
+          "tron_khoa": 68000000
+        },
+        "lien_thong_dai_hoc": "ĐH Kinh tế TPHCM: 44.500.000 đồng/trọn khóa; ĐH Mở: 42.000.000 đồng/trọn khóa",
+        "ghi_chu": null
+      },
+      {
+        "stt": 8,
+        "nganh_hoc": "THIẾT KẾ ĐỒ HỌA",
+        "PA1": {
+          "tam_thu_hk1": 12000000,
+          "tron_khoa": 72000000,
+          "cap_bu_6_hk": null
+        },
+        "PA2": {
+          "tam_thu_hk1": 12000000,
+          "tron_khoa": 72000000
+        },
+        "lien_thong_dai_hoc": "ĐH SPKT TPHCM: 57.500.000 đồng/trọn khóa; ĐH QT Hồng Bàng: 67.500.000 đồng/trọn khóa",
+        "ghi_chu": null
+      },
+      {
+        "stt": 9,
+        "nganh_hoc": "TRUYỀN THÔNG ĐA PHƯƠNG TIỆN",
+        "PA1": {
+          "tam_thu_hk1": 12000000,
+          "tron_khoa": 72000000,
+          "cap_bu_6_hk": null
+        },
+        "PA2": {
+          "tam_thu_hk1": 12000000,
+          "tron_khoa": 72000000
+        },
+        "lien_thong_dai_hoc": "ĐH SPKT TPHCM: 57.500.000 đồng/trọn khóa; ĐH QT Hồng Bàng: 67.500.000 đồng/trọn khóa",
+        "ghi_chu": null
+      },
+      {
+        "stt": 10,
+        "nganh_hoc": "LĂP TRÌNH ỨNG DỤNG",
+        "PA1": {
+          "tam_thu_hk1": 12000000,
+          "tron_khoa": 72000000,
+          "cap_bu_6_hk": null
+        },
+        "PA2": {
+          "tam_thu_hk1": 12000000,
+          "tron_khoa": 72000000
+        },
+        "lien_thong_dai_hoc": "ĐH SPKT TPHCM: 57.500.000 đồng/trọn khóa; ĐH QT Hồng Bàng: 67.500.000 đồng/trọn khóa",
+        "ghi_chu": null
+      },
+      {
+        "stt": 11,
+        "nganh_hoc": "TRUYỀN THÔNG & MẠNG MÁY TÍNH",
+        "PA1": {
+          "tam_thu_hk1": 12000000,
+          "tron_khoa": 72000000,
+          "cap_bu_6_hk": null
+        },
+        "PA2": {
+          "tam_thu_hk1": 12000000,
+          "tron_khoa": 72000000
+        },
+        "lien_thong_dai_hoc": "ĐH SPKT TPHCM: 57.500.000 đồng/trọn khóa; ĐH QT Hồng Bàng: 67.500.000 đồng/trọn khóa",
+        "ghi_chu": null
+      },
+      {
+        "stt": 12,
+        "nganh_hoc": "TIẾNG ANH",
+        "PA1": {
+          "tam_thu_hk1": 12000000,
+          "tron_khoa": 72000000,
+          "cap_bu_6_hk": null
+        },
+        "PA2": {
+          "tam_thu_hk1": 12000000,
+          "tron_khoa": 72000000
+        },
+        "lien_thong_dai_hoc": "ĐH Kinh tế TPHCM: 44.500.000 đồng/trọn khóa; ĐH Mở: 42.000.000 đồng/trọn khóa; ĐH Trà Vinh: 40.000.000 đồng/trọn khóa",
+        "ghi_chu": null
+      },
+      {
+        "stt": 13,
+        "nganh_hoc": "QT DU LỊCH LỮ HÀNH (HP này bao gồm chi phí thực tập tuyến điểm Du lịch 1, tuyến điểm Du lịch 2, không bao gồm tuyến điểm Du lịch Quốc tế)",
+        "PA1": {
+          "tam_thu_hk1": 12000000,
+          "tron_khoa": 72000000,
+          "cap_bu_6_hk": null
+        },
+        "PA2": {
+          "tam_thu_hk1": 12000000,
+          "tron_khoa": 72000000
+        },
+        "lien_thong_dai_hoc": "ĐH Kinh tế TPHCM: 44.500.000 đồng/trọn khóa; ĐH Mở: 42.000.000 đồng/trọn khóa; ĐH Trà Vinh: 40.000.000 đồng/trọn khóa",
+        "ghi_chu": null
+      },
+      {
+        "stt": 14,
+        "nganh_hoc": "QUẢN TRỊ NHÀ HÀNG - KHÁCH SẠN",
+        "PA1": {
+          "tam_thu_hk1": 12000000,
+          "tron_khoa": 72000000,
+          "cap_bu_6_hk": null
+        },
+        "PA2": {
+          "tam_thu_hk1": 12000000,
+          "tron_khoa": 72000000
+        },
+        "lien_thong_dai_hoc": "ĐH Kinh tế TPHCM: 44.500.000 đồng/trọn khóa; ĐH Mở: 42.000.000 đồng/trọn khóa; ĐH Trà Vinh: 40.000.000 đồng/trọn khóa",
+        "ghi_chu": null
+      },
+      {
+        "stt": 15,
+        "nganh_hoc": "HƯỚNG DẪN DU LỊCH",
+        "PA1": {
+          "tam_thu_hk1": 13000000,
+          "tron_khoa": 75000000,
+          "cap_bu_6_hk": 42000000
+        },
+        "PA2": {
+          "tam_thu_hk1": 7000000,
+          "tron_khoa": 50000000
+        },
+        "lien_thong_dai_hoc": null,
+        "ghi_chu": "SV nhận hoàn lại học phí từ Nhà nước (theo tài khoản 03 bên): 2 triệu x 5 tháng x 70% = 7 triệu đồng/HK"
+      },
+      {
+        "stt": 16,
+        "nganh_hoc": "Ô TÔ",
+        "PA1": {
+          "tam_thu_hk1": 13000000,
+          "tron_khoa": 75000000,
+          "cap_bu_6_hk": 50400000
+        },
+        "PA2": {
+          "tam_thu_hk1": 7000000,
+          "tron_khoa": 50000000
+        },
+        "lien_thong_dai_hoc": "ĐH SPKT TPHCM: 57.500.000 đồng/trọn khóa; ĐH GTVT TPHCM: 51.000.000 đồng/trọn khóa",
+        "ghi_chu": "SV nhận hoàn lại học phí từ Nhà nước (theo tài khoản 03 bên): 2.4 triệu x 5 tháng x 70% = 8.4 triệu đồng/HK"
+      },
+      {
+        "stt": 17,
+        "nganh_hoc": "CƠ KHÍ",
+        "PA1": {
+          "tam_thu_hk1": 13000000,
+          "tron_khoa": 75000000,
+          "cap_bu_6_hk": 50400000
+        },
+        "PA2": {
+          "tam_thu_hk1": 7000000,
+          "tron_khoa": 50000000
+        },
+        "lien_thong_dai_hoc": "ĐH SPKT TPHCM: 57.500.000 đồng/trọn khóa; ĐH GTVT TPHCM: 51.000.000 đồng/trọn khóa",
+        "ghi_chu": "SV nhận hoàn lại học phí từ Nhà nước (theo tài khoản 03 bên): 2.4 triệu x 5 tháng x 70% = 8.4 triệu đồng/HK"
+      },
+      {
+        "stt": 18,
+        "nganh_hoc": "XÂY DỰNG",
+        "PA1": {
+          "tam_thu_hk1": 13000000,
+          "tron_khoa": 75000000,
+          "cap_bu_6_hk": 50400000
+        },
+        "PA2": {
+          "tam_thu_hk1": 7000000,
+          "tron_khoa": 50000000
+        },
+        "lien_thong_dai_hoc": "ĐH SPKT TPHCM: 57.500.000 đồng/trọn khóa; ĐH GTVT TPHCM: 51.000.000 đồng/trọn khóa",
+        "ghi_chu": "SV nhận hoàn lại học phí từ Nhà nước (theo tài khoản 03 bên): 2.4 triệu x 5 tháng x 70% = 8.4 triệu đồng/HK"
+      },
+      {
+        "stt": 19,
+        "nganh_hoc": "ĐIỆN - ĐIỆN TỬ",
+        "PA1": {
+          "tam_thu_hk1": 13000000,
+          "tron_khoa": 75000000,
+          "cap_bu_6_hk": 50400000
+        },
+        "PA2": {
+          "tam_thu_hk1": 7000000,
+          "tron_khoa": 50000000
+        },
+        "lien_thong_dai_hoc": "ĐH SPKT TPHCM: 57.500.000 đồng/trọn khóa; ĐH GTVT TPHCM: 51.000.000 đồng/trọn khóa",
+        "ghi_chu": "SV nhận hoàn lại học phí từ Nhà nước (theo tài khoản 03 bên): 2.4 triệu x 5 tháng x 70% = 8.4 triệu đồng/HK"
+      },
+      {
+        "stt": 20,
+        "nganh_hoc": "CHĂM SÓC SẮC ĐẸP",
+        "PA1": {
+          "tam_thu_hk1": 12000000,
+          "tron_khoa": 75000000,
+          "cap_bu_6_hk": null
+        },
+        "PA2": {
+          "tam_thu_hk1": 12000000,
+          "tron_khoa": 75000000
+        },
+        "lien_thong_dai_hoc": "VN chưa có hệ Đại học ngành này",
+        "ghi_chu": null
+      },
+      {
+        "stt": 21,
+        "nganh_hoc": "ĐIỀU DƯỠNG",
+        "PA1": {
+          "tam_thu_hk1": 13000000,
+          "tron_khoa": 82000000,
+          "cap_bu_6_hk": 58800000
+        },
+        "PA2": {
+          "tam_thu_hk1": 7500000,
+          "tron_khoa": 55000000
+        },
+        "lien_thong_dai_hoc": "ĐH QT Hồng Bàng: 67.500.000 đồng/trọn khóa; ĐH Trà Vinh: 56.000.000 đồng/trọn khóa",
+        "ghi_chu": "SV nhận hoàn lại học phí từ Nhà nước (theo tài khoản 03 bên): 2.8 triệu x 5 tháng x 70% = 9.8 triệu đồng/HK"
+      },
+      {
+        "stt": 22,
+        "nganh_hoc": "HỘ SINH",
+        "PA1": {
+          "tam_thu_hk1": 13000000,
+          "tron_khoa": 82000000,
+          "cap_bu_6_hk": 58800000
+        },
+        "PA2": {
+          "tam_thu_hk1": 7500000,
+          "tron_khoa": 55000000
+        },
+        "lien_thong_dai_hoc": "ĐH QT Hồng Bàng: 67.500.000 đồng/trọn khóa; ĐH Trà Vinh: 56.000.000 đồng/trọn khóa",
+        "ghi_chu": "SV nhận hoàn lại học phí từ Nhà nước (theo tài khoản 03 bên): 2.8 triệu x 5 tháng x 70% = 9.8 triệu đồng/HK"
+      },
+      {
+        "stt": 23,
+        "nganh_hoc": "DƯỢC",
+        "PA1": {
+          "tam_thu_hk1": 13000000,
+          "tron_khoa": 82000000,
+          "cap_bu_6_hk": 58800000
+        },
+        "PA2": {
+          "tam_thu_hk1": 7500000,
+          "tron_khoa": 55000000
+        },
+        "lien_thong_dai_hoc": "ĐH QT Hồng Bàng: 67.500.000 đồng/trọn khóa; ĐH Trà Vinh: 56.000.000 đồng/trọn khóa",
+        "ghi_chu": "SV nhận hoàn lại học phí từ Nhà nước (theo tài khoản 03 bên): 2.8 triệu x 5 tháng x 70% = 9.8 triệu đồng/HK"
+      },
+      {
+        "stt": 24,
+        "nganh_hoc": "XÉT NGHIỆM Y HỌC",
+        "PA1": {
+          "tam_thu_hk1": 13000000,
+          "tron_khoa": 82000000,
+          "cap_bu_6_hk": 58800000
+        },
+        "PA2": {
+          "tam_thu_hk1": 7500000,
+          "tron_khoa": 55000000
+        },
+        "lien_thong_dai_hoc": "ĐH QT Hồng Bàng: 67.500.000 đồng/trọn khóa; ĐH Trà Vinh: 56.000.000 đồng/trọn khóa",
+        "ghi_chu": "SV nhận hoàn lại học phí từ Nhà nước (theo tài khoản 03 bên): 2.8 triệu x 5 tháng x 70% = 9.8 triệu đồng/HK"
+      },
+      {
+        "stt": 25,
+        "nganh_hoc": "Y SĨ ĐA KHOA",
+        "PA1": {
+          "tam_thu_hk1": 14000000,
+          "tron_khoa": 85000000,
+          "cap_bu_6_hk": 58800000
+        },
+        "PA2": {
+          "tam_thu_hk1": 8000000,
+          "tron_khoa": 58000000
+        },
+        "lien_thong_dai_hoc": "ĐH QT Hồng Bàng: liên thông qua Bác sĩ đa khoa",
+        "ghi_chu": "SV nhận hoàn lại học phí từ Nhà nước (theo tài khoản 03 bên): 2.8 triệu x 5 tháng x 70% = 9.8 triệu đồng/HK"
+      }
+    ],
+    "ngay_ky_du_kien": "19/03/2026",
+    "chuc_danh": "HIỆU TRƯỞNG"
+  }
+}
