@@ -224,17 +224,19 @@ def _normalize(text: str) -> str:
 
 
 def _match_major(query_norm: str, major_name: str) -> bool:
-    """Kiểm tra query có đề cập tên ngành không (bỏ dấu, bỏ ngoặc)."""
-    # Bỏ phần ghi chú trong ngoặc để so khớp tên chính
+    """Kiểm tra query có đề cập tên ngành không (so khớp từ hoàn chỉnh)."""
     clean = re.sub(r"\(.*?\)", "", major_name).strip()
     major_norm = _normalize(clean)
-    # Tách từ ngành thành tokens; yêu cầu ít nhất 1 token khớp liên tiếp
+    if major_norm in query_norm:
+        return True
+    
     major_tokens = major_norm.split()
-    # Kiểm tra substring hoặc tất cả token quan trọng (>=4 ký tự) có trong query
+    query_tokens = query_norm.split()
     key_tokens = [t for t in major_tokens if len(t) >= 4]
     if not key_tokens:
-        key_tokens = major_tokens
-    return any(t in query_norm for t in key_tokens)
+        return False
+    
+    return any(t in query_tokens for t in key_tokens)
 
 
 def _fmt_money(amount) -> str:
@@ -249,7 +251,7 @@ def lookup_tuition_from_json(full_question: str, search_query: str) -> str | Non
     Trả về chuỗi trả lời hoặc None nếu không đủ thông tin.
     """
     q_all = (full_question + " " + search_query).lower()
-    q_norm = _normalize(q_all)
+    search_norm = _normalize(search_query)
 
     # 1. Xác định hệ đào tạo
     wants_cd18 = any(kw in q_all for kw in ["cd18", "cđ18", "chính quy", "cao đẳng chính quy"])
@@ -286,7 +288,17 @@ def lookup_tuition_from_json(full_question: str, search_query: str) -> str | Non
 
     # 2. Tìm ngành khớp trong danh sách
     danh_sach = system_data.get("danh_sach_nganh", [])
-    matched = [n for n in danh_sach if _match_major(q_norm, n.get("nganh_hoc", ""))]
+    matched = [n for n in danh_sach if _match_major(search_norm, n.get("nganh_hoc", ""))]
+
+    pa_giai_thich = system_data.get("phuong_an_giai_thich", {})
+    is_asking_pa = any(kw in search_norm for kw in ["pa1", "pa2", "phuong an", "pa 1", "pa 2"])
+
+    # Nếu hỏi giải thích PA mà không kèm ngành cụ thể
+    if is_asking_pa and not matched:
+        lines = [f"Dưới đây là giải thích chi tiết về các phương án đóng học phí của {label}:"]
+        if pa_giai_thich.get("PA1"): lines.append(f"👉 PA1: {pa_giai_thich['PA1']}")
+        if pa_giai_thich.get("PA2"): lines.append(f"👉 PA2: {pa_giai_thich['PA2']}")
+        return "\n".join(lines)
 
     # Nếu không khớp ngành cụ thể → hỏi ngược ngành (không để FAISS/LLM trả bừa)
     if not matched:
@@ -363,8 +375,15 @@ def lookup_tuition_from_json(full_question: str, search_query: str) -> str | Non
 
         lines.append(entry.strip())
 
-    lines.append(f"\n{luu_y}" if luu_y else "")
-    return "\n\n".join(l for l in lines if l).strip()
+    if luu_y:
+        lines.append(f"\n💡 Lưu ý: {luu_y}")
+
+    if is_asking_pa and pa_giai_thich:
+        lines.append("\n💡 Giải thích phương án:")
+        if pa_giai_thich.get("PA1"): lines.append(f"- PA1: {pa_giai_thich['PA1']}")
+        if pa_giai_thich.get("PA2"): lines.append(f"- PA2: {pa_giai_thich['PA2']}")
+
+    return "\n".join(lines).strip()
 
 
 # =============================
