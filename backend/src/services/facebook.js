@@ -75,7 +75,8 @@ async function getUserProfile(userId, pageId) {
       },
     });
     return res.data;
-  } catch {
+  } catch (error) {
+    console.error('[Facebook] Lỗi khi lấy profile user:', error.response?.data || error.message);
     return null;
   }
 }

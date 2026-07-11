@@ -457,6 +457,11 @@ async def ask(request: Request, question: str):
     if any(kw in _student_q for kw in _cbtv_kws):
         return {"answer": "Đội ngũ cán bộ tư vấn tuyển sinh của trường nha:\n- Cô Thơ: 0922334400\n- Cô Thu: 0977334400\n- Thầy Nhanh: 0978734400\n- Thầy Huy: 0966337755\n\nBạn nhắn Zalo hoặc gọi trực tiếp đều được nhé 😊"}
 
+    # Địa chỉ trường bypass — hardcode để tránh LLM hallucinate địa chỉ sai (vd: Cà Mau)
+    _diachi_kws = ["địa chỉ", "ở đâu", "tọa lạc", "nằm ở", "đường nào", "quận nào", "phường nào", "trường ở", "cơ sở", "campus", "tìm trường", "đến trường", "xe bus"]
+    if any(kw in _student_q for kw in _diachi_kws):
+        return {"answer": "Trường Cao đẳng Viễn Đông tọa lạc tại: Lô 2, Công viên Phần mềm Quang Trung, Phường Trung Mỹ Tây, TP.HCM (gần ngã tư An Sương) nha 📍\nCó nhiều tuyến xe bus đi ngang, rất thuận tiện đi lại!"}
+
     # Tín chỉ bypass — chunk ngắn FAISS không retrieve được
     _tinchi_kws = ["tín chỉ", "tin chỉ", "1 tín", "một tín", "giá tín", "tiền tín", "bao nhiêu tín"]
     if any(kw in _student_q for kw in _tinchi_kws):
