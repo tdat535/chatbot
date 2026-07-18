@@ -17,6 +17,8 @@ services:
   chatbot:
     build: ./chatbot-python
     restart: always
+    ports:
+      - "127.0.0.1:8000:8000"
     environment:
       GROQ_API_KEY: ${GROQ_API_KEY}
       STORAGE_DIR: /app/storage
