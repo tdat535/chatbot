@@ -265,13 +265,18 @@ def lookup_tuition_from_json(full_question: str, search_query: str) -> str | Non
         last_q_only = q_current
 
     # 1. Xác định hệ đào tạo — ưu tiên câu hỏi cuối cùng
-    wants_cd18 = any(kw in last_q_only for kw in ["cd18", "cđ18", "chính quy", "cao đẳng chính quy"])
-    wants_cd15 = any(kw in last_q_only for kw in ["cd15", "9+3+1", "học nghề", "vừa học vừa thi", "thcs"])
+    wants_cd18 = any(kw in last_q_only for kw in ["cd18", "cđ18", "chính quy", "cao đẳng", "thpt", "cấp 3", "lớp 12"])
+    wants_cd15 = any(kw in last_q_only for kw in ["cd15", "9+3", "học nghề", "vừa học vừa thi", "thcs", "cấp 2", "lớp 9"])
     
     # Nếu câu cuối không nói hệ, thử dò trong câu gộp (ngữ cảnh trước đó)
     if not wants_cd18 and not wants_cd15:
-        wants_cd18 = any(kw in q_current for kw in ["cd18", "cđ18", "chính quy", "cao đẳng chính quy"])
-        wants_cd15 = any(kw in q_current for kw in ["cd15", "9+3+1", "học nghề", "vừa học vừa thi", "thcs"])
+        wants_cd18 = any(kw in q_current for kw in ["cd18", "cđ18", "chính quy", "cao đẳng", "thpt", "cấp 3", "lớp 12"])
+        wants_cd15 = any(kw in q_current for kw in ["cd15", "9+3", "học nghề", "vừa học vừa thi", "thcs", "cấp 2", "lớp 9"])
+
+    # Nếu vẫn chưa rõ, tìm trong toàn bộ lịch sử (vì có thể HS đã nói ở câu trước)
+    if not wants_cd18 and not wants_cd15:
+        wants_cd18 = any(kw in full_question.lower() for kw in ["cd18", "cđ18", "chính quy", "cao đẳng", "thpt", "cấp 3", "lớp 12"])
+        wants_cd15 = any(kw in full_question.lower() for kw in ["cd15", "9+3", "học nghề", "vừa học vừa thi", "thcs", "cấp 2", "lớp 9"])
 
     # Chua ro he
     is_asking_pa = any(kw in search_norm for kw in ["pa1", "pa2", "phuong an", "pa 1", "pa 2"])
@@ -473,8 +478,15 @@ async def ask(request: Request, question: str):
     # Tách câu hỏi thực sự để search (không search cả đoạn hội thoại)
     search_query = extract_last_question(question)
 
-    TUITION_KEYWORDS = ["học phí", "hoc phi", "chi phí", "đóng tiền", "phương án", "pa1", "pa2", "đóng bao nhiêu", "tốn bao nhiêu", "mất bao nhiêu"]
+    TUITION_KEYWORDS = ["học phí", "hoc phi", "chi phí", "đóng tiền", "phương án", "pa1", "pa2", "đóng bao nhiêu", "tốn bao nhiêu", "mất bao nhiêu", "tiền học"]
     is_tuition_q = any(kw in search_query.lower() for kw in TUITION_KEYWORDS)
+
+    # Nếu Bot vừa hỏi ngược học sinh về hệ/ngành học phí, thì câu trả lời tiếp theo chắc chắn là luồng học phí
+    last_context = "\n".join(question.strip().split('\n')[-6:]).lower()
+    if "báo chính xác hơn" in last_context or "xem học phí ngành nào cụ thể" in last_context:
+        # Trừ phi HS bẻ lái sang hỏi chủ đề khác
+        if not any(kw in search_query.lower() for kw in ["xét tuyển", "xet tuyen", "điểm chuẩn", "diem chuan", "hồ sơ", "ho so"]):
+            is_tuition_q = True
 
     # ── Bypass LLM cho câu hỏi học phí — tra cứu thẳng từ JSON ──
     if is_tuition_q and TUITION_DATA:
