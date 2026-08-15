@@ -225,6 +225,19 @@ def _normalize(text: str) -> str:
 
 def _match_major(query_norm: str, major_name: str) -> bool:
     """Kiểm tra query có đề cập tên ngành không (so khớp từ hoàn chỉnh)."""
+    # Thay thế viết tắt phổ biến trong câu hỏi
+    aliases = {
+        "cntt": "cong nghe thong tin",
+        "qtkd": "quan tri kinh doanh",
+        "tkdh": "thiet ke do hoa",
+        "nhks": "nha hang khach san",
+        "oto": "o to",
+        "nna": "ngon ngu anh"
+    }
+    for k, v in aliases.items():
+        if k in query_norm:
+            query_norm = query_norm.replace(k, v)
+
     clean = re.sub(r"\(.*?\)", "", major_name).strip()
     major_norm = _normalize(clean)
     if major_norm in query_norm:
