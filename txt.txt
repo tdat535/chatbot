@@ -8,3 +8,6 @@ Khi deploy lên server thật thì đổi localhost:3001 thành domain/IP thật
 
 Dán vào trước thẻ </body> là xong — widget chat tự hiện góc dưới phải, không cần làm gì 
   thêm.
+
+Nếu thấy chất lượng trả lời chưa ổn, thử đổi sang openai/gpt-oss-120b nhé.
+

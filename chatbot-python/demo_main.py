@@ -595,10 +595,14 @@ Sai: "...Nếu bạn muốn đặt lịch tư vấn 1:1 miễn phí, tôi có th
             model="qwen/qwen3.6-27b",
             messages=messages,
             temperature=0.05,
-            max_tokens=600
+            max_tokens=600,
+            reasoning_effort="none"  # Tắt thinking mode của Qwen3
         )
 
+        import re
         answer = response.choices[0].message.content.strip()
+        # Xoá thẻ <think>...</think> nếu model vẫn trả về
+        answer = re.sub(r'<think>[\s\S]*?</think>', '', answer).strip()
         return {"answer": answer}
 
     except Exception as e:
