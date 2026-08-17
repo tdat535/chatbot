@@ -582,14 +582,29 @@ Sai: "...Nếu bạn muốn đặt lịch tư vấn 1:1 miễn phí, tôi có th
             },
         ]
 
-        messages.append({
-            "role": "user",
-            "content": f"""[CONTEXT]
-{context}
+        # Parse lịch sử hội thoại thành multi-turn messages
+        history_lines = question.strip().split('\n')
+        turns = []
+        for line in history_lines:
+            line = line.strip()
+            if not line:
+                continue
+            if line.startswith("Học sinh:"):
+                turns.append({"role": "user", "content": line[len("Học sinh:"):].strip()})
+            elif line.startswith("Bot:"):
+                turns.append({"role": "assistant", "content": line[len("Bot:"):].strip()})
 
-[CÂU HỎI]
-{question}"""
-        })
+        # Gắn context vào câu hỏi cuối cùng của user
+        if turns and turns[-1]["role"] == "user":
+            last_q = turns[-1]["content"]
+            turns[-1]["content"] = f"[CONTEXT]\n{context}\n\n[CÂU HỎI]\n{last_q}"
+            messages.extend(turns)
+        else:
+            # Fallback nếu parse lỗi
+            messages.append({
+                "role": "user",
+                "content": f"[CONTEXT]\n{context}\n\n[CÂU HỎI]\n{search_query}"
+            })
 
         response = client.chat.completions.create(
             model="openai/gpt-oss-20b",
