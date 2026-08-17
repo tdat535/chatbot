@@ -592,11 +592,10 @@ Sai: "...Nếu bạn muốn đặt lịch tư vấn 1:1 miễn phí, tôi có th
         })
 
         response = client.chat.completions.create(
-            model="qwen/qwen3.6-27b",
+            model="openai/gpt-oss-20b",
             messages=messages,
             temperature=0.05,
-            max_tokens=600,
-            reasoning_effort="none"  # Tắt thinking mode của Qwen3
+            max_tokens=600
         )
 
         import re
