@@ -592,7 +592,7 @@ Sai: "...Nếu bạn muốn đặt lịch tư vấn 1:1 miễn phí, tôi có th
         })
 
         response = client.chat.completions.create(
-            model="llama-3.1-70b-versatile",
+            model="llama3-70b-8192",
             messages=messages,
             temperature=0.05,
             max_tokens=600
